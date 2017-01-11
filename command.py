@@ -11,7 +11,7 @@ TIME_RANGES = ['000000-115959', '120000-235959']
 
 
 def _basic_query():
-    return 'findscu -to 6000 -S \
+    return 'findscu -to 6000 -v -S \
            -k 0008,0052=SERIES \
            -aec AE_ARCH2_4PR 10.5.66.74 104 \
            -aet YETI \

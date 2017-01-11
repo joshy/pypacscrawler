@@ -31,7 +31,9 @@ def cli(year, date, mod, dry):
     else:
         click.echo('Running query mode')
         df = pd.DataFrame()
-        for cmd in cmds:
+        cmd_len = len(cmds)
+        for i, cmd in enumerate(cmds, start=1):
+            click.echo('Running cmd ' + str(i) + ' of ' + str(cmd_len))
             completed = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             lines = completed.stderr.decode('latin1').splitlines()
             df.append(dicom.get_headers(lines))
