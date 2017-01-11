@@ -9,7 +9,8 @@ import command as c
 
 
 @click.command()
-@click.option('--year', help='Year to query for')
+@click.option('--year', help='Year to query for, if set other options are \
+                              ignored (except --file)')
 @click.option('--date', help='Date to query for, format is yyyy-mm-dd')
 @click.option('--mod', help='Modality to query for')
 @click.option('--file', help='Print out commands, don\'t query')
