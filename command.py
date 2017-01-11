@@ -1,8 +1,6 @@
 import shlex
 import pandas as pd
 
-START_DATE = '2016-01-01'
-END_DATE = '2016-12-31'
 
 MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
               'OT', 'PR', 'KO', 'SC', 'SD', 'PX', 'xa', 'DR']
@@ -47,6 +45,12 @@ def _add_time(query, time):
     return query + ' -k SeriesTime=' + time
 
 
+def _year_start_end(year):
+    start = year - pd.tseries.offsets.YearBegin()
+    end = year + pd.tseries.offsets.YearEnd()
+    return start, end
+
+
 def create_cmds(date, mod):
     """ Creates commands for a specific date and modality. """
     cmds = []
@@ -59,11 +63,15 @@ def create_cmds(date, mod):
     return cmds
 
 
-def create_full_year_cmds():
-    """ Generates all the findscu commands. """
+def create_full_year_cmds(year):
+    """
+    Generates all the findscu commands for all modalities for
+    all the days of the year.
+    """
     cmds = []
     basic = _basic_query()
-    for day in pd.date_range(START_DATE, END_DATE):
+    start, end = _year_start_end(year)
+    for day in pd.date_range(start, end):
         day_p = _add_date(basic, day)
         for time_range in TIME_RANGES:
             time_p = _add_time(day_p, time_range)
