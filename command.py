@@ -5,7 +5,10 @@ import pandas as pd
 MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
               'OT', 'PR', 'KO', 'SC', 'SD', 'PX', 'xa', 'DR']
 
-TIME_RANGES = ['000000-115959', '120000-235959']
+TIME_RANGES = ['000000-075959',
+               '080000-115959',
+               '120000-155959',
+               '160000-235959']
 
 
 def _basic_query():
@@ -32,7 +35,7 @@ def _basic_query():
            -k SeriesInstanceUID'
 
 
-def _add_modalitiy(query, modality):
+def _add_modality(query, modality):
     return query + ' -k Modality=' + modality
 
 
@@ -58,7 +61,7 @@ def create_cmds(date, mod):
     d = _add_date(basic, date)
     for time_range in TIME_RANGES:
         t = _add_time(d, time_range)
-        args = _add_modalitiy(t, mod)
+        args = _add_modality(t, mod)
         cmds.append(shlex.split(args))
     return cmds
 
@@ -76,6 +79,6 @@ def create_full_year_cmds(year):
         for time_range in TIME_RANGES:
             time_p = _add_time(day_p, time_range)
             for mod in MODALITIES:
-                args = _add_modalitiy(time_p, mod)
+                args = _add_modality(time_p, mod)
                 cmds.append(shlex.split(args))
     return cmds
