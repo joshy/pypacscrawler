@@ -6,9 +6,12 @@ MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
               'OT', 'PR', 'KO', 'SC', 'SD', 'PX', 'xa', 'DR']
 
 TIME_RANGES = ['000000-075959',
-               '080000-115959',
-               '120000-155959',
-               '160000-235959']
+               '080000-095959',
+               '100000-115959',
+               '120000-135959',
+               '140000-155959',
+               '160000-175959',
+               '180000-235959']
 
 
 def _basic_query():
@@ -58,10 +61,10 @@ def create_cmds(date, mod):
     """ Creates commands for a specific date and modality. """
     cmds = []
     basic = _basic_query()
-    d = _add_date(basic, date)
+    with_date = _add_date(basic, date)
     for time_range in TIME_RANGES:
-        t = _add_time(d, time_range)
-        args = _add_modality(t, mod)
+        with_time = _add_time(with_date, time_range)
+        args = _add_modality(with_time, mod)
         cmds.append(shlex.split(args))
     return cmds
 

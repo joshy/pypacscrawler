@@ -99,4 +99,4 @@ ENV/
 # application logs
 logs/
 
-data-*/
+data*/
