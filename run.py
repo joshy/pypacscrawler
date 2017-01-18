@@ -79,9 +79,11 @@ def cli(year, month, day, mod, debug):
         click.echo('Running query mode')
         if year:
             for month in year_cmds:
+                click.echo('Running month %s', month)
                 result_df = _execute(month)
                 file_name = _get_file_name(year, month, day, mod)
                 _write_file(result_df, file_name)
+                click.echo('Month %s finised', month)
         else:
             result_df = _execute(cmds)
             file_name = _get_file_name(year, month, day, mod)
