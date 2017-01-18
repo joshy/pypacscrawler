@@ -44,9 +44,9 @@ def _add_modality(query, modality):
     return query + ' -k Modality=' + modality
 
 
-def _add_date(query, date):
-    q_date = date.strftime("%Y%m%d")
-    return query + ' -k StudyDate=' + q_date + ' -k SeriesDate=' + q_date
+def _add_day(query, day):
+    q_day = day.strftime("%Y%m%d")
+    return query + ' -k StudyDate=' + q_day + ' -k SeriesDate=' + q_day
 
 
 def _add_time(query, time):
@@ -59,15 +59,34 @@ def _year_start_end(year):
     return start, end
 
 
-def create_cmds(date, mod):
-    """ Creates commands for a specific date and modality. """
+def create_cmds(day, mod):
+    """ Creates commands for a specific day and modality. """
     cmds = []
     basic = _basic_query()
-    with_date = _add_date(basic, date)
+    with_day = _add_day(basic, day)
     for time_range in TIME_RANGES:
-        with_time = _add_time(with_date, time_range)
+        with_time = _add_time(with_day, time_range)
         args = _add_modality(with_time, mod)
         cmds.append(shlex.split(args))
+    return cmds
+
+
+def create_year_month_cmds(year_month):
+    """
+    Generates all the findscu commands for all modalities for
+    all the days of the year.
+    """
+    cmds = []
+    basic = _basic_query()
+    start  = year_month
+    end =  year_month + pd.tseries.offsets.MonthEnd()
+    for day in pd.date_range(start, end):
+        day_p = _add_day(basic, day)
+        for time_range in TIME_RANGES:
+            time_p = _add_time(day_p, time_range)
+            for mod in MODALITIES:
+                args = _add_modality(time_p, mod)
+                cmds.append(shlex.split(args))
     return cmds
 
 
@@ -80,7 +99,7 @@ def create_full_year_cmds(year):
     basic = _basic_query()
     start, end = _year_start_end(year)
     for day in pd.date_range(start, end):
-        day_p = _add_date(basic, day)
+        day_p = _add_day(basic, day)
         for time_range in TIME_RANGES:
             time_p = _add_time(day_p, time_range)
             for mod in MODALITIES:
