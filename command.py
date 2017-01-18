@@ -2,7 +2,7 @@ import shlex
 import pandas as pd
 
 from datetime import date
-from typings import Tuple, List
+from typing import Tuple, List
 
 
 MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
