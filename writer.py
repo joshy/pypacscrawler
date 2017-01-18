@@ -3,7 +3,7 @@ import os
 OUTPUT_DIR = 'data'
 
 
-def get_file_name(month, day, mod):
+def get_file_name(month: str, day: str, mod: str):
     file_name = os.path.join(OUTPUT_DIR, 'data-')
     if month:
         return file_name + month + '.csv'

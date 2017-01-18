@@ -2,6 +2,7 @@ import shlex
 import pandas as pd
 
 from datetime import date
+from typings import Tuple, List
 
 
 MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
@@ -71,7 +72,7 @@ def create_cmds(day, mod):
     return cmds
 
 
-def create_year_month_cmds(year_month):
+def create_year_month_cmds(year_month) -> List[List[str]]:
     """
     Generates all the findscu commands for all modalities for
     all the days of month.
@@ -94,4 +95,4 @@ def create_full_year_cmds(year):
     start, end = _year_start_end(year)
     # MS is month start frequency
     months = pd.date_range(start, end, freq='MS')
-    return [create_year_month_cmds(month) for month in months]
+    return [create_year_month_cmds(month) for month in months], months
