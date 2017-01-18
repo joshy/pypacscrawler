@@ -1,5 +1,6 @@
 """ A simple regex based parser for dicom. """
 import re
+from typing import List, Dict, Tuple
 
 PATIENT_NAME = 'PatientName'
 PATIENT_BIRTHDATE = 'PatientBirthDate'
@@ -54,7 +55,7 @@ TAGS = {
 START_OR_END = re.compile('^W:\s*$')
 
 
-def get_headers(strings):
+def get_headers(strings: List[str]) -> List[Dict[str, str]]:
     """ Get dict of tags and values. """
     result = []
     single_header = {}
@@ -67,23 +68,24 @@ def get_headers(strings):
     return result
 
 
-def _is_start_or_end(line):
+def _is_start_or_end(line: str) -> bool:
     """ Returns True if it is the start or end of a DICOM header.
         Checks for an Line 'W:<empty space>'
-     """
-    return START_OR_END.match(line)
+    """
+    match = START_OR_END.match(line)
+    return match != None
 
 
-def _is_valid(line):
+def _is_valid(line: str) -> bool:
     return line.startswith('W:') \
            and '(' in line and ')' in line and '[' in line and ']' in line
 
 
-def _get_tag_value(line):
+def _get_tag_value(line: str) -> Tuple[str, str]:
     return _get_tag(line), _get_value(line)
 
 
-def _get_tag(line):
+def _get_tag(line: str) -> str:
     """
     Returns the tag value of the line, which is everything between
     the first square brackets.
@@ -94,7 +96,7 @@ def _get_tag(line):
     return TAGS[line[3:14]]
 
 
-def _get_value(line):
+def _get_value(line: str) -> str:
     """
     Returns the value of the line, which is everything between
     the first and last square bracket.
