@@ -23,8 +23,8 @@ def get_file_name(year, month, day, mod):
 @click.command()
 @click.option('--year', help='Year to query for, if year is set other options \
                               are ignored (except --file)')
-@click.option('--month', help='Month of year to year, format is yyyy-mm')
-@click.option('--date', help='Date to query for, format is yyyy-mm-dd')
+@click.option('--month', help='Month of year to query, format is yyyy-mm')
+@click.option('--day', help='Day to query for, format is yyyy-mm-dd')
 @click.option('--mod', help='Modality to query for')
 @click.option('--debug', help='Print out commands to passed file name, \
                                doesn\'t query the PACS')
