@@ -1,6 +1,8 @@
 import shlex
 import pandas as pd
 
+from datetime import date
+
 
 MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
               'OT', 'PR', 'KO', 'SC', 'SD', 'PX', 'xa', 'DR']
@@ -52,8 +54,8 @@ def _add_time(query, time):
 
 
 def _year_start_end(year):
-    start = year - pd.tseries.offsets.YearBegin()
-    end = year + pd.tseries.offsets.YearEnd()
+    start = date(year.year, 1, 1)
+    end = date(year.year, 12, 31)
     return start, end
 
 
