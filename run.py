@@ -10,7 +10,8 @@ import dicom
 
 OUTPUT_DIR = 'data'
 
-def get_file_name(year, month, day, mod):
+
+def _get_file_name(year, month, day, mod):
     file_name = os.path.join(OUTPUT_DIR, 'data-')
     if year:
         return file_name + year + '.csv'
@@ -20,9 +21,36 @@ def get_file_name(year, month, day, mod):
         return file_name + day + '-' + mod + '.csv'
 
 
+def _execute(cmds):
+    frames = []
+    cmd_len = len(cmds)
+    for i, cmd in enumerate(cmds, start=1):
+        click.echo('Running cmd ' + str(i) + ' of ' + str(cmd_len))
+        completed = subprocess.run(cmd,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
+        lines = completed.stderr.decode('latin1').splitlines()
+        frames.append(pd.DataFrame.from_dict(dicom.get_headers(lines)))
+
+    result_df = pd.concat(frames)
+    return result_df
+
+
+def _write_file(df, file_name):
+    df.to_csv(file_name, header=True, index=False, sep=';')
+
+
+def _debug_file(debug, cmds):
+    with open(debug, 'w') as command_file:
+        for cmd in cmds:
+            command_file.write(' '.join(cmd))
+            command_file.write('\n')
+
+
 @click.command()
 @click.option('--year', help='Year to query for, if year is set other options \
-                              are ignored (except --file)')
+                              are ignored (except --debug). For each month \
+                              a separate file is created')
 @click.option('--month', help='Month of year to query, format is yyyy-mm')
 @click.option('--day', help='Day to query for, format is yyyy-mm-dd')
 @click.option('--mod', help='Modality to query for')
@@ -31,10 +59,12 @@ def get_file_name(year, month, day, mod):
 def cli(year, month, day, mod, debug):
     """ This script queries the pacs and generates a csv file. """
     cmds = []
+    year_cmds = []
 
     if year:
         query_year = datetime.datetime.strptime(year, '%Y')
-        cmds = c.create_full_year_cmds(query_year)
+        year_cmds = c.create_full_year_cmds(query_year)
+
     if month:
         year_month = datetime.datetime.strptime(month, '%Y-%m')
         cmds = c.create_year_month_cmds(year_month)
@@ -43,23 +73,16 @@ def cli(year, month, day, mod, debug):
         cmds = c.create_cmds(query_date, mod)
 
     if debug:
-        click.echo('Running debug mode')
-        with open(debug, 'w') as command_file:
-            for cmd in cmds:
-                command_file.write(' '.join(cmd))
-                command_file.write('\n')
+        click.echo('Running debug mode, commands are written to %s', debug)
+        _debug_file(debug, cmds)
     else:
         click.echo('Running query mode')
-        frames = []
-        cmd_len = len(cmds)
-        for i, cmd in enumerate(cmds, start=1):
-            click.echo('Running cmd ' + str(i) + ' of ' + str(cmd_len))
-            completed = subprocess.run(cmd,
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE)
-            lines = completed.stderr.decode('latin1').splitlines()
-            frames.append(pd.DataFrame.from_dict(dicom.get_headers(lines)))
-
-        result_df = pd.concat(frames)
-        file_name = get_file_name(year, month, day, mod)
-        result_df.to_csv(file_name, header=True, index=False)
+        if year:
+            for month in year_cmds:
+                result_df = _execute(month)
+                file_name = _get_file_name(year, month, day, mod)
+                _write_file(result_df, file_name)
+        else:
+            result_df = _execute(cmds)
+            file_name = _get_file_name(year, month, day, mod)
+            _write_file(result_df, file_name)

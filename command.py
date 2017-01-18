@@ -74,12 +74,12 @@ def create_cmds(day, mod):
 def create_year_month_cmds(year_month):
     """
     Generates all the findscu commands for all modalities for
-    all the days of the year.
+    all the days of month.
     """
     cmds = []
     basic = _basic_query()
-    start  = year_month
-    end =  year_month + pd.tseries.offsets.MonthEnd()
+    start = year_month
+    end = year_month + pd.tseries.offsets.MonthEnd()
     for day in pd.date_range(start, end):
         day_p = _add_day(basic, day)
         for time_range in TIME_RANGES:
@@ -91,18 +91,7 @@ def create_year_month_cmds(year_month):
 
 
 def create_full_year_cmds(year):
-    """
-    Generates all the findscu commands for all modalities for
-    all the days of the year.
-    """
-    cmds = []
-    basic = _basic_query()
     start, end = _year_start_end(year)
-    for day in pd.date_range(start, end):
-        day_p = _add_day(basic, day)
-        for time_range in TIME_RANGES:
-            time_p = _add_time(day_p, time_range)
-            for mod in MODALITIES:
-                args = _add_modality(time_p, mod)
-                cmds.append(shlex.split(args))
-    return cmds
+    # MS is month start frequency
+    months = pd.date_range(start, end, freq='MS')
+    return [create_year_month_cmds(month) for month in months]
