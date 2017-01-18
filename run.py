@@ -64,8 +64,7 @@ def cli(year, month, day, mod, debug):
     if year:
         query_year = datetime.datetime.strptime(year, '%Y')
         year_cmds = c.create_full_year_cmds(query_year)
-
-    if month:
+    elif month:
         year_month = datetime.datetime.strptime(month, '%Y-%m')
         cmds = c.create_year_month_cmds(year_month)
     else:
@@ -78,12 +77,12 @@ def cli(year, month, day, mod, debug):
     else:
         click.echo('Running query mode')
         if year:
-            for month in year_cmds:
-                click.echo('Running month %s', month)
+            for i, month in enumerate(year_cmds, start=1):
+                click.echo('Running month %s', i)
                 result_df = _execute(month)
                 file_name = _get_file_name(year, month, day, mod)
                 _write_file(result_df, file_name)
-                click.echo('Month %s finised', month)
+                click.echo('Month %s finised', i)
         else:
             result_df = _execute(cmds)
             file_name = _get_file_name(year, month, day, mod)
