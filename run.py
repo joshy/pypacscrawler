@@ -19,7 +19,13 @@ def _execute(cmds):
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
             lines = completed.stderr.decode('latin1').splitlines()
-            frames.append(pd.DataFrame.from_dict(dicom.get_headers(lines)))
+            result = dicom.get_headers(lines)
+            if result >= 500:
+                click.echo('Warning got equal/more than 500 results ' +
+                           len(result))
+                msg = result[0].get('StudyDate') + ', ' + result[0].get('Modality')
+                click.echo(msg)
+            frames.append(pd.DataFrame.from_dict(result))
 
     result_df = pd.concat(frames)
     return result_df
