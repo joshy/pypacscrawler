@@ -20,7 +20,7 @@ def _execute(cmds):
                                        stderr=subprocess.PIPE)
             lines = completed.stderr.decode('latin1').splitlines()
             result = dicom.get_headers(lines)
-            if result >= 500:
+            if len(result) >= 500:
                 click.echo('Warning got equal/more than 500 results ' +
                            len(result))
                 msg = result[0].get('StudyDate') + ', ' + result[0].get('Modality')
