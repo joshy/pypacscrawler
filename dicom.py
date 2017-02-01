@@ -52,7 +52,7 @@ TAGS = {
     '(0008,0054)': RETRIEVE_AE_TITLE
 }
 
-START_OR_END = re.compile('^W:\s*$')
+START_OR_END = re.compile(r'^W:\s*$')
 
 
 def get_headers(strings: List[str]) -> List[Dict[str, str]]:
