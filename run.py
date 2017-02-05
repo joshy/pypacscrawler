@@ -22,7 +22,7 @@ def _execute(cmds):
             result = dicom.get_headers(lines)
             if len(result) >= 500:
                 click.echo('Warning got equal/more than 500 results ' +
-                           len(result))
+                           str(len(result)))
                 msg = result[0].get('StudyDate') + ', ' + result[0].get('Modality')
                 click.echo(msg)
             frames.append(pd.DataFrame.from_dict(result))
