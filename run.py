@@ -1,4 +1,5 @@
 import datetime
+
 import os
 import subprocess
 
@@ -19,7 +20,7 @@ def _execute(cmds):
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
             lines = completed.stderr.decode('latin1').splitlines()
-            result = dicom.get_headers(lines)
+            result = dicom.get_results(lines)
             if len(result) >= 500:
                 click.echo('Warning got equal/more than 500 results ' +
                            str(len(result)))

@@ -55,17 +55,25 @@ TAGS = {
 START_OR_END = re.compile(r'^W:\s*$')
 
 
-def get_headers(strings: List[str]) -> List[Dict[str, str]]:
-    """ Get dict of tags and values. """
+def get_results(strings: List[str]) -> List[Dict[str, str]]:
+    """ Get list of results found. A single result is a dictionary
+    where the keys are the dicom tags and the value is the dicom value.
+    """
     result = []
-    single_header = {}
+    single_result = {}
     for line in strings:
         if _is_valid(line):
-            single_header[_get_tag(line)] = _get_value(line)
-        if _is_start_or_end(line) and single_header:
-            result.append(single_header.copy())
-            single_header.clear()
+            single_result[_get_tag(line)] = _get_value(line)
+        if _is_start_or_end(line) and single_result:
+            if _sanity_check(single_result):
+                result.append(single_result.copy())
+            single_result.clear()
     return result
+
+
+def _sanity_check(single_result: Dict[str, str]):
+    """ Only return results which have a PatientID and a Accession Number"""
+    return 'PatientID' in single_result and 'AccessionNumber' in single_result
 
 
 def _is_start_or_end(line: str) -> bool:
