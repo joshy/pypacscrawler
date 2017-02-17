@@ -13,18 +13,18 @@ import writer
 
 def _execute(cmds):
     frames = []
-    with click.progressbar(cmds,
-                           label='Running commands') as commands:
+    with click.progressbar(cmds, label='Running commands') as commands:
         for cmd in commands:
-            completed = subprocess.run(cmd,
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE)
+            completed = subprocess.run(cmd, stderr=subprocess.PIPE)
             lines = completed.stderr.decode('latin1').splitlines()
             result = dicom.get_results(lines)
             if len(result) >= 500:
                 click.echo('Warning got equal/more than 500 results ' +
                            str(len(result)))
-                msg = result[0].get('StudyDate') + ', ' + result[0].get('Modality')
+                # following keys are the same for all of them, that is why
+                # first is taken
+                sample = result[0]
+                msg = sample['StudyDate'] + ':' + sample['StudyTime'] + ':' + sample['Modality']
                 click.echo(msg)
             frames.append(pd.DataFrame.from_dict(result))
 
