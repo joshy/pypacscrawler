@@ -95,11 +95,12 @@ def _get_tag_value(line: str) -> Tuple[str, str]:
 
 def _get_tag(line: str) -> str:
     """
-    Returns the tag value of the line, which is everything between
-    the first square brackets.
+    Returns the resolved tag value of the line. It first gets the content
+    between the first round brackets and then makes a lookup to get the
+    tag value.
     For example on this line
         W: (0010,0040) CS [F ]
-    tag value would be (0010,0040)
+    tag value would be (0010,0040) and resolved would be 'Modality'.
     """
     return TAGS[line[3:14]]
 
