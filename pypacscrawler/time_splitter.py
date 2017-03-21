@@ -11,14 +11,21 @@ def split(time_range):
     :return: two time ranges, e.g. '000000-115959' and '120000-235959'
     """
     start, end = time_range.split('-')
+    start_value = datetime.strptime(start, '%H%M%S')
     end_value = datetime.strptime(end, '%H%M%S')
-    delta = timedelta(hours=end_value.hour, minutes=end_value.minute,
-                      seconds=end_value.second + 1)
-    middle = delta / 2
-    middle_left = middle - timedelta(seconds=1)
-    middle_right = middle
+
+    delta_start = timedelta(hours=start_value.hour, minutes=start_value.minute,
+                            seconds=start_value.second)
+    delta_end = timedelta(hours=end_value.hour, minutes=end_value.minute,
+                          seconds=end_value.second + 1)
+
+    middle = abs(delta_end.total_seconds() - delta_start.total_seconds()) / 2
+    middle_left = timedelta(seconds=middle - 1)
+    middle_right = timedelta(seconds=middle)
     left = start + '-' + f(middle_left)
-    right = f(middle_right) + '-' + end
+    rr = timedelta(middle_right.total_seconds() + middle/2)
+    right = f(middle_right) + '-' + f(timedelta(seconds=middle_right.total_seconds() + middle - 1))
+
 
     return left, right
 

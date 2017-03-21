@@ -6,8 +6,10 @@ from pypacscrawler.executor import run
 
 
 def time_ranges_per_day(mod, day, time_range):
+    print('-----------------------')
+    print(time_range)
+    print('-----------------------')
     query = prepare_query(mod, day, time_range)
-    print('running query')
     result, size = run(query)
 
     if size < 500:
@@ -16,9 +18,8 @@ def time_ranges_per_day(mod, day, time_range):
     else:
         print('results >= 500 for {}, splitting'.format(time_range))
         l, r = split(time_range)
-        l_q = prepare_query(day, l)
-        r_q = prepare_query(day, r)
-        return [time_ranges_per_day(day, l_q), time_ranges_per_day(day, r_q)]
+        return [time_ranges_per_day(mod, day, l),
+                time_ranges_per_day(mod, day, r)]
 
 
 def prepare_query(mod, day, time_range):

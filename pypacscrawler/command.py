@@ -26,9 +26,8 @@ def scout_query():
     500, do the basic query. Just asks for the accession number.
     :return: minimal query
     """
-    return '''findscu -to 6000 -v -S -k 0008,0052=SERIES {}
-           -k AccessionNumber
-           '''.format(pacs_settings())
+    return 'findscu -to 6000 -v -S -k 0008,0052=SERIES {} ' \
+           '-k PatientID -k AccessionNumber'.format(pacs_settings())
 
 
 def _basic_query():
