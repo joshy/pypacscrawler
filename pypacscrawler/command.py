@@ -23,7 +23,7 @@ TIME_RANGES = ['000000-075959',
 def scout_query():
     """
     A minimal query just to find out the result size. If the size is below
-    500, do the actual query.
+    500, do the basic query. Just asks for the accession number.
     :return: minimal query
     """
     return '''findscu -to 6000 -v -S -k 0008,0052=SERIES {}
@@ -52,16 +52,19 @@ def _basic_query():
            -k SeriesInstanceUID'''.format(pacs_settings())
 
 
-def _add_modality(query, modality):
+def add_modality(query, modality):
+    """ Adds the modality to the query. """
     return query + ' -k Modality=' + modality
 
 
 def add_day(query, day):
+    """ Adds the StudyDate and SeriesDate to the query. """
     q_day = day.strftime("%Y%m%d")
     return query + ' -k StudyDate=' + q_day + ' -k SeriesDate=' + q_day
 
 
 def add_time(query, time):
+    """ Adds the Seriestime to the query. """
     return query + ' -k SeriesTime=' + time
 
 
@@ -78,7 +81,7 @@ def create_cmds(day, mod):
     with_day = add_day(basic, day)
     for time_range in TIME_RANGES:
         with_time = add_time(with_day, time_range)
-        args = _add_modality(with_time, mod)
+        args = add_modality(with_time, mod)
         cmds.append(shlex.split(args))
     return cmds
 
@@ -97,7 +100,7 @@ def create_year_month_cmds(year_month):
         for time_range in TIME_RANGES:
             time_p = add_time(day_p, time_range)
             for mod in MODALITIES:
-                args = _add_modality(time_p, mod)
+                args = add_modality(time_p, mod)
                 cmds.append(shlex.split(args))
     return cmds
 

@@ -1,7 +1,7 @@
 import configparser
 
 
-def pacs_settings(file='../config.ini'):
+def pacs_settings(file='config.ini'):
     config = configparser.ConfigParser()
     config.read(file)
     ae_called = config['PACS']['AE_CALLED']

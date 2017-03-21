@@ -67,9 +67,9 @@ def cli(year, month, day, mod, debug, time_range):
         if year:
             cmds = [item for sublist in year_cmds for item in sublist]
         writer.debug_file(debug, cmds)
-    elif debug and time_range:
+    elif day and time_range:
         query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
-        r = time_ranges_per_day(query_date, c.INITIAL_TIME_RANGE)
+        r = time_ranges_per_day(mod, query_date, c.INITIAL_TIME_RANGE)
         print('Found time frames')
         print(r)
     else:
@@ -86,3 +86,7 @@ def cli(year, month, day, mod, debug, time_range):
             result_df = _execute(cmds)
             file_name = writer.get_file_name(month, day, mod)
             writer.write_file(result_df, file_name)
+
+
+if __name__ == '__main__':
+    cli()
