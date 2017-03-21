@@ -31,7 +31,7 @@ class TimeSplitterTest(unittest.TestCase):
         rl, rr = time_splitter.split(r)
         self.assertEqual('000000-025959', ll)
         self.assertEqual('030000-055959', lr)
-        #self.assertEqual('060000-085959', rl)
+        self.assertEqual('060000-085959', rl)
         self.assertEqual('090000-115959', rr)
 
 

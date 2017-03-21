@@ -20,12 +20,10 @@ def split(time_range):
                           seconds=end_value.second + 1)
 
     middle = abs(delta_end.total_seconds() - delta_start.total_seconds()) / 2
-    middle_left = timedelta(seconds=middle - 1)
-    middle_right = timedelta(seconds=middle)
-    left = start + '-' + f(middle_left)
-    rr = timedelta(middle_right.total_seconds() + middle/2)
-    right = f(middle_right) + '-' + f(timedelta(seconds=middle_right.total_seconds() + middle - 1))
-
+    i_right = f(delta_start + timedelta(seconds=middle - 1))
+    i_left = f(delta_start + timedelta(seconds=middle))
+    left = start + '-' + i_right
+    right = i_left + '-' + f(delta_end-timedelta(seconds=1))
 
     return left, right
 
@@ -40,4 +38,5 @@ def pre(value):
 def f(time_delta):
     hours, remainder = divmod(time_delta.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
+    print(pre(hours) + ':' + pre(minutes) + ':' + pre(seconds))
     return pre(hours) + pre(minutes) + pre(seconds)
