@@ -1,14 +1,12 @@
 import datetime
-
-import os
 import subprocess
 
 import click
 import pandas as pd
 
-import command as c
-import dicom
-import writer
+import pypacscrawler.command as c
+from pypacscrawler import dicom, writer
+from pypacscrawler.result_splitter import time_ranges_per_day
 
 
 def _execute(cmds):
@@ -24,7 +22,8 @@ def _execute(cmds):
                 # following keys are the same for all of them, that is why
                 # first is taken
                 sample = result[0]
-                msg = sample['StudyDate'] + ':' + sample['StudyTime'] + ':' + sample['Modality']
+                msg = sample['StudyDate'] + ':' + sample['StudyTime'] + ':' + \
+                      sample['Modality']
                 click.echo(msg)
             frames.append(pd.DataFrame.from_dict(result))
 
@@ -41,7 +40,8 @@ def _execute(cmds):
 @click.option('--mod', help='Modality to query for')
 @click.option('--debug', help='Print out commands to passed file name, \
                                doesn\'t query the PACS')
-def cli(year, month, day, mod, debug):
+@click.option('--time_range', help='Print the time ranges for a given day')
+def cli(year, month, day, mod, debug, time_range):
     """ This script queries the pacs and generates a csv file. """
     if not year and not month and not day:
         click.echo('No input was given')
@@ -67,13 +67,18 @@ def cli(year, month, day, mod, debug):
         if year:
             cmds = [item for sublist in year_cmds for item in sublist]
         writer.debug_file(debug, cmds)
+    elif debug and time_range:
+        query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
+        r = time_ranges_per_day(query_date, c.INITIAL_TIME_RANGE)
+        print('Found time frames')
+        print(r)
     else:
         click.echo('Running query mode')
         if year:
             for i, cmds in enumerate(year_cmds, start=1):
                 click.echo('Start: Running month ' + str(i))
                 result_df = _execute(cmds)
-                month = months[i-1].strftime('%Y-%m')
+                month = months[i - 1].strftime('%Y-%m')
                 file_name = writer.get_file_name(month, day, mod)
                 writer.write_file(result_df, file_name)
                 click.echo('End: Running month ' + str(i))

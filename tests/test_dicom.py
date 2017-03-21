@@ -1,5 +1,6 @@
 import unittest
-import dicom
+
+from pypacscrawler import dicom
 
 
 class DicomTest(unittest.TestCase):
