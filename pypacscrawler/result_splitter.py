@@ -1,6 +1,6 @@
 # Finds out the time ranges for a given day
 
-from pypacscrawler.command import scout_query, add_time, add_day, add_modality
+from pypacscrawler.command import basic_query, add_time, add_day, add_modality
 from pypacscrawler.time_splitter import split
 from pypacscrawler.executor import run
 
@@ -23,7 +23,7 @@ def time_ranges_per_day(mod, day, time_range):
 
 
 def prepare_query(mod, day, time_range):
-    query = add_day(scout_query(), day)
+    query = add_day(basic_query(), day)
     query = add_modality(query, mod)
     query = add_time(query, time_range)
     return query

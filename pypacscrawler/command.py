@@ -20,17 +20,7 @@ TIME_RANGES = ['000000-075959',
                '180000-235959']
 
 
-def scout_query():
-    """
-    A minimal query just to find out the result size. If the size is below
-    500, do the basic query. Just asks for the accession number.
-    :return: minimal query
-    """
-    return 'findscu -to 6000 -v -S -k 0008,0052=SERIES {} ' \
-           '-k PatientID -k AccessionNumber'.format(pacs_settings())
-
-
-def _basic_query():
+def basic_query():
     return '''findscu -to 6000 -v -S -k 0008,0052=SERIES {}
            -k PatientName
            -k PatientBirthDate
@@ -76,7 +66,7 @@ def _year_start_end(year):
 def create_cmds(day, mod):
     """ Creates commands for a specific day and modality. """
     cmds = []
-    basic = _basic_query()
+    basic = basic_query()
     with_day = add_day(basic, day)
     for time_range in TIME_RANGES:
         with_time = add_time(with_day, time_range)
@@ -91,7 +81,7 @@ def create_year_month_cmds(year_month):
     all the days of month.
     """
     cmds = []
-    basic = _basic_query()
+    basic = basic_query()
     start = year_month
     end = year_month + pd.tseries.offsets.MonthEnd()
     for day in pd.date_range(start, end):

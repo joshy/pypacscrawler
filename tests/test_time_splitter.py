@@ -22,7 +22,6 @@ class TimeSplitterTest(unittest.TestCase):
         self.assertEqual('060000-085959', l)
         self.assertEqual('090000-115959', r)
 
-
     def test_third_level(self):
         # 0-3, 3-6, 6-9, 9-12
         left, right = time_splitter.split(INITIAL)
@@ -34,11 +33,9 @@ class TimeSplitterTest(unittest.TestCase):
         self.assertEqual('060000-085959', rl)
         self.assertEqual('090000-115959', rr)
 
-
     def test_right(self):
         left, right = time_splitter.split(INITIAL)
         l, r = time_splitter.split(left)
-        ll, lr = time_splitter.split(l)
         ll, _ = time_splitter.split(l)
         lll, rrr = time_splitter.split(ll)
         llll, rrrr = time_splitter.split(lll)
@@ -46,4 +43,3 @@ class TimeSplitterTest(unittest.TestCase):
         self.assertEqual('013000-025959', rrr)
         self.assertEqual('000000-004459', llll)
         self.assertEqual('004500-012959', rrrr)
-
