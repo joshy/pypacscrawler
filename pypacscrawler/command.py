@@ -21,6 +21,7 @@ TIME_RANGES = ['000000-075959',
 
 
 def basic_query():
+    """Returns a basic findscu command with no query parameters set."""
     return '''findscu -to 6000 -v -S -k 0008,0052=SERIES {}
            -k PatientName
            -k PatientBirthDate
@@ -53,7 +54,7 @@ def add_day(query, day):
 
 
 def add_time(query, time):
-    """ Adds the Seriestime to the query. """
+    """ Adds the Series time to the query. """
     return query + ' -k SeriesTime=' + time
 
 
