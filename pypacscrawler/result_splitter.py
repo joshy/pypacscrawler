@@ -5,7 +5,7 @@ from pypacscrawler.time_splitter import split
 from pypacscrawler.executor import run
 
 
-def time_ranges_per_day(mod, day, time_range):
+def query_day(mod, day, time_range):
     print('-----------------------')
     print(time_range)
     print('-----------------------')
@@ -14,12 +14,12 @@ def time_ranges_per_day(mod, day, time_range):
 
     if size < 500:
         print('result < 500 for {}'.format(time_range))
-        return [time_range]
+        return [result]
     else:
         print('results >= 500 for {}, splitting'.format(time_range))
         l, r = split(time_range)
-        return [time_ranges_per_day(mod, day, l),
-                time_ranges_per_day(mod, day, r)]
+        return [query_day(mod, day, l),
+                query_day(mod, day, r)]
 
 
 def prepare_query(mod, day, time_range):

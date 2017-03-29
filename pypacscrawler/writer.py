@@ -1,14 +1,23 @@
 import os
+import pandas as pd
 
 OUTPUT_DIR = 'data'
 
 
 def get_file_name(month: str, day: str, mod: str):
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
     file_name = os.path.join(OUTPUT_DIR, 'data-')
     if month:
         return file_name + month + '.csv'
     else:
         return file_name + day + '-' + mod + '.csv'
+
+
+def write_results(results, file_name):
+    frames = pd.concat([pd.DataFrame.from_dict(x) for x in results])
+    write_file(frames, file_name)
 
 
 def write_file(data_frame, file_name):

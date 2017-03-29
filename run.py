@@ -6,7 +6,7 @@ import pandas as pd
 
 import pypacscrawler.command as c
 from pypacscrawler import dicom, writer
-from pypacscrawler.result_splitter import time_ranges_per_day
+from pypacscrawler.result_splitter import query_day
 
 
 def _execute(cmds):
@@ -69,9 +69,9 @@ def cli(year, month, day, mod, debug, time_range):
         writer.debug_file(debug, cmds)
     elif day and time_range:
         query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
-        r = time_ranges_per_day(mod, query_date, c.INITIAL_TIME_RANGE)
-        print('Found time frames')
-        print(r)
+        results = query_day(mod, query_date, c.INITIAL_TIME_RANGE)
+        file_name = writer.get_file_name(month, day, mod)
+        writer.write_results(results, file_name)
     else:
         click.echo('Running query mode')
         if year:

@@ -56,8 +56,11 @@ START_OR_END = re.compile(r'^W:\s*$')
 
 
 def get_results(strings: List[str]) -> List[Dict[str, str]]:
-    """ Get list of results found. A single result is a dictionary
-    where the keys are the dicom tags and the value is the dicom value.
+    """
+    Get list of results found. A single result is a dictionary
+    where the keys are the DICOM tags and the value is the dicom value.
+    :param strings: list of strings
+    :return: list of results (result is a dictionary)
     """
     result = []
     single_result = {}
@@ -81,7 +84,7 @@ def _is_start_or_end(line: str) -> bool:
         Checks for an Line 'W:<empty space>'
     """
     match = START_OR_END.match(line)
-    return match != None
+    return match is not None
 
 
 def _is_valid(line: str) -> bool:
