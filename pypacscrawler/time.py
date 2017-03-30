@@ -14,28 +14,31 @@ def split(time_range):
     start_value = datetime.strptime(start, '%H%M%S')
     end_value = datetime.strptime(end, '%H%M%S')
 
-    delta_start = timedelta(hours=start_value.hour, minutes=start_value.minute,
+    delta_start = timedelta(hours=start_value.hour,
+                            minutes=start_value.minute,
                             seconds=start_value.second)
-    delta_end = timedelta(hours=end_value.hour, minutes=end_value.minute,
+
+    delta_end = timedelta(hours=end_value.hour,
+                          minutes=end_value.minute,
                           seconds=end_value.second + 1)
 
     middle = abs(delta_end.total_seconds() - delta_start.total_seconds()) / 2
-    i_right = f(delta_start + timedelta(seconds=middle - 1))
-    i_left = f(delta_start + timedelta(seconds=middle))
+    i_right = _format_time(delta_start + timedelta(seconds=middle - 1))
+    i_left = _format_time(delta_start + timedelta(seconds=middle))
     left = start + '-' + i_right
-    right = i_left + '-' + f(delta_end - timedelta(seconds=1))
+    right = i_left + '-' + _format_time(delta_end - timedelta(seconds=1))
 
     return left, right
 
 
-def pre(value):
+def _prefix_zero(value):
     v = str(value)
     if len(v) == 1:
         v = '0' + v
     return v
 
 
-def f(time_delta):
+def _format_time(time_delta):
     hours, remainder = divmod(time_delta.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
-    return pre(hours) + pre(minutes) + pre(seconds)
+    return _prefix_zero(hours) + _prefix_zero(minutes) + _prefix_zero(seconds)

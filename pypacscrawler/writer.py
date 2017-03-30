@@ -7,7 +7,6 @@ OUTPUT_DIR = 'data'
 def get_file_name(month: str, day: str, mod: str):
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
-
     file_name = os.path.join(OUTPUT_DIR, 'data-')
     if month:
         return file_name + month + '.csv'
@@ -16,16 +15,5 @@ def get_file_name(month: str, day: str, mod: str):
 
 
 def write_results(results, file_name):
-    frames = pd.concat([pd.DataFrame.from_dict(x) for x in results])
-    write_file(frames, file_name)
-
-
-def write_file(data_frame, file_name):
-    data_frame.to_csv(file_name, header=True, index=False, sep=';')
-
-
-def debug_file(debug, cmds):
-    with open(debug, 'w') as command_file:
-        for cmd in cmds:
-            command_file.write(' '.join(cmd))
-            command_file.write('\n')
+    frames = pd.concat([pd.DataFrame(x) for x in results if len(x) > 0])
+    frames.to_csv(file_name, header=True, index=False, sep=';')

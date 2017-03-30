@@ -1,4 +1,4 @@
-""" A simple regex based parser for dicom. """
+""" A simple regex based parser for DICOM (DCMTK output to be more precise). """
 import re
 from typing import List, Dict, Tuple
 
@@ -58,7 +58,7 @@ START_OR_END = re.compile(r'^W:\s*$')
 def get_results(strings: List[str]) -> List[Dict[str, str]]:
     """
     Get list of results found. A single result is a dictionary
-    where the keys are the DICOM tags and the value is the dicom value.
+    where the keys are the DICOM tags and the value is the DICOM value.
     :param strings: list of strings
     :return: list of results (result is a dictionary)
     """
@@ -112,7 +112,7 @@ def _get_value(line: str) -> str:
     """
     Returns the value of the line, which is everything between
     the first and last square bracket.
-    :param line: a line of the dicom file
+    :param line: a line of the Dicom file
     :return: value
     """
     start = line.find('[') + 1

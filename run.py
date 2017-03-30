@@ -1,91 +1,34 @@
 import datetime
-import subprocess
-
 import click
-import pandas as pd
+
 
 import pypacscrawler.command as c
-from pypacscrawler import dicom, writer
-from pypacscrawler.result_splitter import query_day
-
-
-def _execute(cmds):
-    frames = []
-    with click.progressbar(cmds, label='Running commands') as commands:
-        for cmd in commands:
-            completed = subprocess.run(cmd, stderr=subprocess.PIPE)
-            lines = completed.stderr.decode('latin1').splitlines()
-            result = dicom.get_results(lines)
-            if len(result) >= 500:
-                click.echo('Warning got equal/more than 500 results ' +
-                           str(len(result)))
-                # following keys are the same for all of them, that is why
-                # first is taken
-                sample = result[0]
-                msg = sample['StudyDate'] + ':' + sample['StudyTime'] + ':' + \
-                      sample['Modality']
-                click.echo(msg)
-            frames.append(pd.DataFrame.from_dict(result))
-
-    result_df = pd.concat(frames)
-    return result_df
+from pypacscrawler import writer
+from pypacscrawler.query import query_day, query_month, query_year
 
 
 @click.command()
 @click.option('--year', help='Year to query for, if year is set other options \
-                              are ignored (except --debug). For each month \
-                              a separate file is created')
+                              are ignored. For each month a separate file is \
+                              created')
 @click.option('--month', help='Month of year to query, format is yyyy-mm')
 @click.option('--day', help='Day to query for, format is yyyy-mm-dd')
 @click.option('--mod', help='Modality to query for')
-@click.option('--debug', help='Print out commands to passed file name, \
-                               doesn\'t query the PACS')
-@click.option('--time_range', help='Print the time ranges for a given day')
-def cli(year, month, day, mod, debug, time_range):
+def cli(year, month, day, mod,):
     """ This script queries the pacs and generates a csv file. """
     if not year and not month and not day:
-        click.echo('No input was given')
+        click.echo('No year, month or day was given')
         exit(1)
 
-    cmds = []
-    year_cmds = []
-
     if year:
-        query_year = datetime.datetime.strptime(year, '%Y')
-        click.echo('Start: Generating commands for year ' + year)
-        year_cmds, months = c.create_full_year_cmds(query_year)
-        click.echo('End: Generating commands for year ' + year)
+        query_year(year)
     elif month:
-        year_month = datetime.datetime.strptime(month, '%Y-%m')
-        cmds = c.create_year_month_cmds(year_month)
+        query_month(month)
     else:
-        query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
-        cmds = c.create_cmds(query_date, mod)
-
-    if debug:
-        click.echo('Running debug mode, commands are written to ' + debug)
-        if year:
-            cmds = [item for sublist in year_cmds for item in sublist]
-        writer.debug_file(debug, cmds)
-    elif day and time_range:
         query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
         results = query_day(mod, query_date, c.INITIAL_TIME_RANGE)
         file_name = writer.get_file_name(month, day, mod)
         writer.write_results(results, file_name)
-    else:
-        click.echo('Running query mode')
-        if year:
-            for i, cmds in enumerate(year_cmds, start=1):
-                click.echo('Start: Running month ' + str(i))
-                result_df = _execute(cmds)
-                month = months[i - 1].strftime('%Y-%m')
-                file_name = writer.get_file_name(month, day, mod)
-                writer.write_file(result_df, file_name)
-                click.echo('End: Running month ' + str(i))
-        else:
-            result_df = _execute(cmds)
-            file_name = writer.get_file_name(month, day, mod)
-            writer.write_file(result_df, file_name)
 
 
 if __name__ == '__main__':
