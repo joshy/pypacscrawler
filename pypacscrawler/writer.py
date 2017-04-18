@@ -9,11 +9,11 @@ def get_file_name(month: str, day: str, mod: str):
         os.makedirs(OUTPUT_DIR)
     file_name = os.path.join(OUTPUT_DIR, 'data-')
     if month:
-        return file_name + month + '.csv'
+        return file_name + month + '.json'
     else:
-        return file_name + day + '-' + mod + '.csv'
+        return file_name + day + '-' + mod + '.json'
 
 
 def write_results(results, file_name):
     frames = pd.concat([pd.DataFrame(x) for x in results if len(x) > 0])
-    frames.to_csv(file_name, header=True, index=False, sep=';')
+    frames.to_json(file_name + '.json', orient='records')
