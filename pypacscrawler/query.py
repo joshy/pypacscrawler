@@ -1,5 +1,6 @@
 # Finds out the time ranges for a given day
 import sys
+import logging
 import datetime as datetime
 import pandas as pd
 
@@ -23,7 +24,6 @@ def query_year(year):
 
 def query_month(year_month):
     # type: (str) -> List[Dict[str, str]]
-    print('\nRunning month: {}'.format(year_month))
     start = datetime.datetime.strptime(year_month, '%Y-%m')
     end = start + pd.tseries.offsets.MonthEnd()
     results = []
@@ -43,7 +43,9 @@ def query_day(mod, day, time_range):
         sys.stdout.flush()
         return [result]
     else:
-        print('results >= 500 for {} {} {}, splitting'
+        sys.stdout.write('|')
+        sys.stdout.flush()
+        logging.debug('results >= 500 for {} {} {}, splitting'
               .format(mod, day, time_range))
         l, r = split(time_range)
         return query_day(mod, day, l) + query_day(mod, day, r)

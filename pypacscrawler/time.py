@@ -27,7 +27,6 @@ def split(time_range):
     i_left = _format_time(delta_start + timedelta(seconds=middle))
     left = start + '-' + i_right
     right = i_left + '-' + _format_time(delta_end - timedelta(seconds=1))
-
     return left, right
 
 

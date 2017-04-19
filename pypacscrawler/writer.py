@@ -1,3 +1,4 @@
+import logging
 import os
 import pandas as pd
 
@@ -18,4 +19,5 @@ def write_results(results, month, day, mod):
     # type: (List[Dict[str, str]], str, str, str) -> None
     file_name = _get_file_name(month, day, mod)
     frames = pd.concat([pd.DataFrame(x) for x in results if len(x) > 0])
+    logging.info('Writing results to file %s', file_name)
     frames.to_json(file_name, orient='records')
