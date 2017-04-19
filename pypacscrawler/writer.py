@@ -4,7 +4,7 @@ import pandas as pd
 OUTPUT_DIR = 'data'
 
 
-def get_file_name(month: str, day: str, mod: str):
+def _get_file_name(month: str, day: str, mod: str):
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
     file_name = os.path.join(OUTPUT_DIR, 'data-')
@@ -14,6 +14,8 @@ def get_file_name(month: str, day: str, mod: str):
         return file_name + day + '-' + mod + '.json'
 
 
-def write_results(results, file_name):
+def write_results(results, month, day, mod):
+    # type: (List[Dict[str, str]], str, str, str) -> None
+    file_name = _get_file_name(month, day, mod)
     frames = pd.concat([pd.DataFrame(x) for x in results if len(x) > 0])
     frames.to_json(file_name, orient='records')

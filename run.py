@@ -3,7 +3,7 @@ import click
 
 
 import pypacscrawler.command as c
-from pypacscrawler import writer
+import pypacscrawler.writer as w
 from pypacscrawler.query import query_day, query_month, query_year
 
 
@@ -21,14 +21,15 @@ def cli(year, month, day, mod,):
         exit(1)
 
     if year:
-        query_year(year)
+        results = query_year(year)
+        w.write_results(results, month, day, mod)
     elif month:
-        query_month(month)
+        results = query_month(month)
+        w.write_results(results, month, day, mod)
     else:
         query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
         results = query_day(mod, query_date, c.INITIAL_TIME_RANGE)
-        file_name = writer.get_file_name(month, day, mod)
-        writer.write_results(results, file_name)
+        w.write_results(results, month, day, mod)
 
 
 if __name__ == '__main__':
