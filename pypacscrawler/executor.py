@@ -1,12 +1,11 @@
 import shlex
 import subprocess
 
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from pypacscrawler.dicom import get_results
 
 
-def run(query):
-    # type: (str) -> (List[Dict[str, str]], int)
+def run(query: str) -> Tuple[List[Dict[str, str]], int]:
     """
     Executes a findscu query and parses the result
     :param query: findscu query

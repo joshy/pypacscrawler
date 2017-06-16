@@ -2,6 +2,8 @@ import logging
 import os
 import pandas as pd
 
+from typing import Dict, List
+
 OUTPUT_DIR = 'data'
 
 
@@ -15,8 +17,7 @@ def _get_file_name(month: str, day: str, mod: str):
         return file_name + day + '-' + mod + '.json'
 
 
-def write_results(results, month, day, mod):
-    # type: (List[Dict[str, str]], str, str, str) -> None
+def write_results(results: List[Dict[str, str]], month: str, day: str, mod: str):
     file_name = _get_file_name(month, day, mod)
     frames = pd.concat([pd.DataFrame(x) for x in results if len(x) > 0])
     logging.info('Writing results to file %s', file_name)

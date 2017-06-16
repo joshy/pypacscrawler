@@ -48,8 +48,7 @@ def add_time(query, time):
     return query + ' -k SeriesTime=' + time
 
 
-def year_start_end(year):
-    # type: (str) -> Tuple[date, date]
+def year_start_end(year: str) -> Tuple[date, date]:
     y = datetime.strptime(year, '%Y')
     start = date(y.year, 1, 1)
     end = date(y.year, 12, 31)
