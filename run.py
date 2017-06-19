@@ -25,17 +25,18 @@ def cli(year, month, day, mod):
 
     if year:
         logging.info('Runnig year %s', year)
-        results = query_year(year)
-        w.write_results(results, month, day, mod)
+        for m, results in query_year(year):
+            w.write_results(results, m, day, mod)
     elif month:
         logging.info('Running month %s', month)
         results = query_month(month)
         w.write_results(results, month, day, mod)
     else:
         logging.info('Running day %s', day)
-        logging.info('Running mod %s', )
+        logging.info('Running mod %s', mod)
         query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
         results = query_day(mod, query_date, c.INITIAL_TIME_RANGE)
+        logging.info('Querying pacs finished')
         w.write_results(results, month, day, mod)
 
 

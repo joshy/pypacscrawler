@@ -4,21 +4,21 @@ import logging
 import datetime as datetime
 import pandas as pd
 
-from typing import List, Dict
+from typing import List, Dict, Iterator, Tuple
 from pypacscrawler.command import basic_query, add_time, add_day, \
     add_modality, year_start_end, MODALITIES, INITIAL_TIME_RANGE
 from pypacscrawler.time import split
 from pypacscrawler.executor import run
 
 
-def query_year(year: str) -> List[Dict[str, str]]:
+def query_year(year: str) -> Iterator[Tuple[str, List[Dict[str, str]]]]:
+    """ Returns a basic generator for each month. """
     start, end = year_start_end(year)
     # MS is month start frequency
     months = pd.date_range(start, end, freq='MS')
-    results = []
     for month in months:
-        results.extend(query_month(month.strftime('%Y-%m')))
-    return results
+        m = month.strftime('%Y-%m')
+        yield m, query_month(m)
 
 
 def query_month(year_month: str) -> List[Dict[str, str]]:
