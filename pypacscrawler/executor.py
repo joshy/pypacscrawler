@@ -14,7 +14,10 @@ def run(query):
     and second value is result size
     """
     cmd = shlex.split(query)
-    completed = subprocess.run(cmd, stderr=subprocess.PIPE)
-    lines = completed.stderr.decode('latin1').splitlines()
+    completed = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(cmd)
+    lines = completed.stderr.decode('latin1')
+    print(lines)
     result = get_results(lines)
+    print(len(result))
     return result, len(result)
