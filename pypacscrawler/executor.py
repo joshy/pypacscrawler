@@ -15,9 +15,6 @@ def run(query):
     """
     cmd = shlex.split(query)
     completed = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    print(cmd)
-    lines = completed.stderr.decode('latin1')
-    print(lines)
+    lines = completed.stderr.decode('latin1').splitlines()
     result = get_results(lines)
-    print(len(result))
     return result, len(result)
