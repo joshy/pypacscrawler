@@ -33,9 +33,9 @@ def query_month(year_month):
     return results
 
 
-def query_day(mod, day, time_range):
+def query_day(app, mod, day, time_range):
     # type: (str, str, str) -> List[Dict[str, str]]
-    query = prepare_query(mod, day, time_range)
+    query = prepare_query(app, mod, day, time_range)
     result, size = run(query)
 
     if size < 500:
@@ -51,8 +51,8 @@ def query_day(mod, day, time_range):
         return query_day(mod, day, l) + query_day(mod, day, r)
 
 
-def prepare_query(mod, day, time_range):
-    query = add_day(basic_query(), day)
+def prepare_query(app, mod, day, time_range):
+    query = add_day(basic_query(app), day)
     query = add_modality(query, mod)
     query = add_time(query, time_range)
     return query

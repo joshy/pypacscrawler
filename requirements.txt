@@ -1,2 +1,8 @@
 click
 pandas
+flask
+Flask-Assets
+requests
+schedule
+jsmin
+daiquiri

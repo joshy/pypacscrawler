@@ -1,17 +1,15 @@
-import configparser
+import flask
 
 
-def pacs_settings(file='config.ini'):
+def pacs_settings(app):
     """
-    Reads the configuration from the config.ini file
-    :param file: config file name (optional, default='config.ini')
+    Reads the configuration from the default flask instance folder
+    :param the flask app
     :return: str: PACS settings
     """
-    config = configparser.ConfigParser()
-    config.read(file)
-    ae_called = config['PACS']['AE_CALLED']
-    ae_peer_address = config['PACS']['PEER_ADDRESS']
-    ae_peer_port = config['PACS']['PEER_PORT']
-    ae_title = config['PACS']['AE_TITLE']
+    ae_called = app.config['AE_CALLED']
+    ae_peer_address = app.config['PEER_ADDRESS']
+    ae_peer_port = app.config['PEER_PORT']
+    ae_title = app.config['AE_TITLE']
     return '-aec {} {} {} -aet {}'.format(ae_called, ae_peer_address,
                                           ae_peer_port, ae_title)

@@ -13,6 +13,7 @@ def run(query):
     :return: a tuple where the first value is a list of DICOM tags and values
     and second value is result size
     """
+    print(query)
     cmd = shlex.split(query)
     completed = subprocess.run(cmd, stderr=subprocess.PIPE)
     lines = completed.stderr.decode('latin1').splitlines()

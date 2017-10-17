@@ -10,7 +10,7 @@ MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
 INITIAL_TIME_RANGE = '000000-235959'
 
 
-def basic_query():
+def basic_query(app):
     """Returns a basic findscu command with no query parameters set."""
     return '''findscu -to 6000 -v -S -k 0008,0052=SERIES {}
            -k PatientName
@@ -29,7 +29,7 @@ def basic_query():
            -k ReferringPhysicianName
            -k InstitutionName
            -k StudyInstanceUID
-           -k SeriesInstanceUID'''.format(pacs_settings())
+           -k SeriesInstanceUID'''.format(pacs_settings(app))
 
 
 def add_modality(query, modality):
