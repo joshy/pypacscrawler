@@ -102,6 +102,6 @@ logs/
 data*/
 config.ini
 .vscode
-
+instance
 
 .mypy_cache
