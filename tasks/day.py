@@ -1,4 +1,5 @@
 import luigi
+from luigi.format import UTF8, Text, TextFormat
 
 import pypacscrawler.writer as w
 from pypacscrawler.query import query_day
@@ -13,7 +14,7 @@ class DayTask(luigi.Task):
             w.write_file(results, outfile)
 
     def output(self):
-        return luigi.LocalTarget('data-%s.json' % self.day)
+        return luigi.LocalTarget('data/data-%s.json' % self.day)
 
 if __name__ == '__main__':
     luigi.run()

@@ -11,14 +11,10 @@ from pypacscrawler.time import split
 from pypacscrawler.executor import run
 
 
-def query_year(year: str) -> List[Dict[str, str]]:
+def get_months_of_year(year: str) -> List[Dict[str, str]]:
     start, end = year_start_end(year)
     # MS is month start frequency
-    months = pd.date_range(start, end, freq='MS')
-    results = []
-    for month in months:
-        results.extend(query_month(month.strftime('%Y-%m')))
-    return results
+    return [d.strftime('%Y-%m') for d in pd.date_range(start, end, freq='MS')]
 
 
 def query_month(year_month: str) -> List[Dict[str, str]]:
@@ -42,6 +38,7 @@ def query_day(day: str) -> List[Dict[str, str]]:
 def query_day_extended(mod: str, day: datetime.datetime, time_range: str) -> List[Dict[str, str]]:
     query = prepare_query(mod, day, time_range)
     result, size = run(query)
+    print(size)
 
     if size < 500:
         sys.stdout.write('.')
