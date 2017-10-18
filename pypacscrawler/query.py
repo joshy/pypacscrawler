@@ -38,7 +38,6 @@ def query_day(day: str) -> List[Dict[str, str]]:
 def query_day_extended(mod: str, day: datetime.datetime, time_range: str) -> List[Dict[str, str]]:
     query = prepare_query(mod, day, time_range)
     result, size = run(query)
-    print(size)
 
     if size < 500:
         sys.stdout.write('.')
