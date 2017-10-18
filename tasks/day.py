@@ -1,9 +1,9 @@
 import luigi
 
 import pypacscrawler.writer as w
-from pypacscrawler.query import query_day_extended
+from pypacscrawler.query import query_day
 
-class MonthTask(luigi.Task):
+class DayTask(luigi.Task):
     # day format is yyyy-mm-dd
     day = luigi.Parameter()
 
