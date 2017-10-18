@@ -3,6 +3,7 @@ import luigi
 import pypacscrawler.writer as w
 from pypacscrawler.query import query_month
 
+
 class MonthTask(luigi.Task):
     # month format is yyyy-mm
     month = luigi.Parameter()
@@ -13,7 +14,8 @@ class MonthTask(luigi.Task):
             w.write_file(results, outfile)
 
     def output(self):
-        return luigi.LocalTarget('data-%s.json' % self.month)
+        return luigi.LocalTarget('data/%s.json' % self.month)
+
 
 if __name__ == '__main__':
     luigi.run()
