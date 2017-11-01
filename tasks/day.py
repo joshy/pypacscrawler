@@ -6,6 +6,8 @@ from pypacscrawler.query import query_day
 
 
 class DayTask(luigi.Task):
+    # example run command
+    # python -m tasks.day DayTask --day 2017-01-01
     # day format is yyyy-mm-dd
     day = luigi.Parameter()
 
@@ -15,7 +17,7 @@ class DayTask(luigi.Task):
             w.write_file(results, outfile)
 
     def output(self):
-        return luigi.LocalTarget('data/%s.json' % self.day)
+        return luigi.LocalTarget('data/pacs_%s.json' % self.day)
 
 
 if __name__ == '__main__':
