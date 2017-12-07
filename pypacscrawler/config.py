@@ -15,3 +15,14 @@ def pacs_settings(file='config.ini'):
     ae_title = config['PACS']['AE_TITLE']
     return '-aec {} {} {} -aet {}'.format(ae_called, ae_peer_address,
                                           ae_peer_port, ae_title)
+
+
+def solr_settings(file='config.ini'):
+    """
+    Reads the configuration from the config.ini file
+    :param file: config file name (optional, default='config.ini')
+    :return: str: solr settings
+    """
+    config = configparser.ConfigParser()
+    config.read(file)
+    return {'solr_core_url': config['SOLR']['CORE_PATH']}
