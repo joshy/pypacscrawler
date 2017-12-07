@@ -96,16 +96,11 @@ class UpdateSolrTask(luigi.Task):
 
     def run(self):
         base_url = parse.urljoin(get_solr_core_url(), 'update/json')
-        params = {
-            'stream.file': get_json_path(self.accession_number, os.getcwd()),
-            'charset': 'utf-8',
-            'commitWithin': '1000'
-         }
-        url = base_url + '?' + parse.urlencode(params)
 
-        print('update url:\n', url)
-
-        update_response = requests.post(url=url)
+        file_path = get_json_path(self.accession_number)
+        print('FILE PATH: ', file_path)
+        file = {base_url: open(file_path)}
+        update_response = requests.post(url=base_url, files=file)
 
         print('UPDATE response:\n',update_response)
         if not update_response.ok:
