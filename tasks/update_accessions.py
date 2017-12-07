@@ -60,19 +60,11 @@ class DeleteSolrAccessionTask(luigi.Task):
                        </query>
                    </delete>
                    '''.format(self.accession_number),
-            headers={"Content-type": "text/xml"}
+            headers={"Content-type": "text/xml"},
+            params={"commit": "true"}
         )
         if not delete_response.ok:
             raise ValueError(delete_response.text)
-
-        commit_response = requests.post(
-            url=url,
-            data='<commit />',
-            headers={"Content-type": "text/xml"}
-        )
-
-        if not commit_response.ok:
-            raise ValueError(commit_response.text)
 
         delete_success_path = os.path.join(
             status_dir,
@@ -98,11 +90,18 @@ class UpdateSolrTask(luigi.Task):
         base_url = parse.urljoin(get_solr_core_url(), 'update/json')
 
         file_path = get_json_path(self.accession_number)
-        print('FILE PATH: ', file_path)
-        file = {base_url: open(file_path)}
-        update_response = requests.post(url=base_url, files=file)
 
-        print('UPDATE response:\n',update_response)
+        with open(file_path, 'rb') as f:
+            file = {
+                base_url: (
+                    file_path,
+                    f,
+                    'application/json'
+                )
+            }
+            update_response = requests.post(url=base_url, files=file, params={'commit': 'true'})
+            print('+++++',update_response.request)
+
         if not update_response.ok:
             raise ValueError(update_response.text)
 
@@ -135,6 +134,8 @@ class AccessionListUpdateTask(luigi.Task):
         print('Accessions to UPDATE:', accessions_col, sep='\n')
 
         for accession_number in accessions_col:
+            print('---------------------')
+            print(accession_number)
             yield UpdateSolrTask(accession_number)
 
         pd.DataFrame([{'input_file': self.csv_path}]).to_csv(self.success_path)
