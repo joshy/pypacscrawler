@@ -99,8 +99,11 @@ class UpdateSolrTask(luigi.Task):
                     'application/json'
                 )
             }
-            update_response = requests.post(url=base_url, files=file, params={'commit': 'true'})
-            print('+++++',update_response.request)
+            update_response = requests.post(
+                url=base_url,
+                files=file,
+                params={'commit': 'true'}
+            )
 
         if not update_response.ok:
             raise ValueError(update_response.text)
@@ -131,11 +134,7 @@ class AccessionListUpdateTask(luigi.Task):
         accessions_df = pd.read_csv(self.csv_path)
         accessions_col = accessions_df.ix[:, 0]
 
-        print('Accessions to UPDATE:', accessions_col, sep='\n')
-
         for accession_number in accessions_col:
-            print('---------------------')
-            print(accession_number)
             yield UpdateSolrTask(accession_number)
 
         pd.DataFrame([{'input_file': self.csv_path}]).to_csv(self.success_path)
