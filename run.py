@@ -5,7 +5,7 @@ from logging.config import fileConfig
 
 import pypacscrawler.command as c
 import pypacscrawler.writer as w
-from pypacscrawler.query import query_day_extended, get_months_of_year, query_year
+from pypacscrawler.query import query_day_extended, get_months_of_year, query_month
 
 
 @click.command()

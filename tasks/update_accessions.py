@@ -32,11 +32,11 @@ class GetPacsAccessionTask(luigi.Task):
     def run(self):
         # find on pacs
         query = cmd.add_accession(cmd.basic_query(), self.accession_number)
-        results = exec.run(query)
+        results, _ = exec.run(query)
 
         # save to json
         with self.output().open('w') as outfile:
-            w.write_file(results, outfile)
+            w.write_file([results], outfile)
 
     def output(self):
         json_path = get_json_path(self.accession_number)
@@ -47,7 +47,7 @@ class DeleteSolrAccessionTask(luigi.Task):
     accession_number = luigi.Parameter()
 
     def requires(self):
-        GetPacsAccessionTask(accession_number=self.accession_number)
+        return GetPacsAccessionTask(accession_number=self.accession_number)
 
     def run(self):
         url = parse.urljoin(get_solr_core_url(), 'update')
