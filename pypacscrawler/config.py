@@ -17,7 +17,7 @@ def pacs_settings(file='config.ini'):
                                           ae_peer_port, ae_title)
 
 
-def solr_settings(file='config.ini'):
+def get_solr_core_url(file='config.ini'):
     """
     Reads the configuration from the config.ini file
     :param file: config file name (optional, default='config.ini')
@@ -25,4 +25,6 @@ def solr_settings(file='config.ini'):
     """
     config = configparser.ConfigParser()
     config.read(file)
-    return {'solr_core_url': config['SOLR']['CORE_PATH']}
+    solr_core_url = config['SOLR']['CORE_PATH']
+    last_char_is_slash = solr_core_url[-1] == '/'
+    return solr_core_url if last_char_is_slash else solr_core_url + '/'

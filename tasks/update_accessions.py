@@ -5,29 +5,27 @@ from urllib import parse
 from pathlib import Path
 import pypacscrawler.command as cmd
 import pypacscrawler.executor as exec
-from pypacscrawler.config import solr_settings
+from pypacscrawler.config import get_solr_core_url
 import pypacscrawler.writer as w
 import time
 import os
 
-status_dir = 'data/status'
-if not os.path.exists(status_dir):
-    os.makedirs(status_dir)
 
+class CreateOutputDirTask(luigi.Task):
 
-def get_json_path(accession_number):
-    file_path_no_ext = os.path.join(status_dir, accession_number)
-    return '{}.json'.format(file_path_no_ext)
+    def run(self):
+        if not os.path.exists(self.output().path):
+            os.makedirs(self.output().path)
 
-
-def get_solr_core_url():
-    solr_core_url = solr_settings()['solr_core_url']
-    last_char_is_slash = solr_core_url[-1] == '/'
-    return solr_core_url if last_char_is_slash else solr_core_url + '/'
+    def output(self):
+        return luigi.LocalTarget(os.path.join('data', 'status'))
 
 
 class GetPacsAccessionTask(luigi.Task):
     accession_number = luigi.Parameter()
+
+    def requires(self):
+        return CreateOutputDirTask()
 
     def run(self):
         # find on pacs
@@ -39,7 +37,11 @@ class GetPacsAccessionTask(luigi.Task):
             w.write_file([results], outfile)
 
     def output(self):
-        json_path = get_json_path(self.accession_number)
+        file_path_no_ext = os.path.join(
+            self.input().path,
+            self.accession_number
+        )
+        json_path = '{}.json'.format(file_path_no_ext)
         return luigi.LocalTarget(json_path)
 
 
@@ -47,7 +49,7 @@ class DeleteSolrAccessionTask(luigi.Task):
     accession_number = luigi.Parameter()
 
     def requires(self):
-        return GetPacsAccessionTask(accession_number=self.accession_number)
+        return CreateOutputDirTask()
 
     def run(self):
         url = parse.urljoin(get_solr_core_url(), 'update')
@@ -66,15 +68,11 @@ class DeleteSolrAccessionTask(luigi.Task):
         if not delete_response.ok:
             raise ValueError(delete_response.text)
 
-        delete_success_path = os.path.join(
-            status_dir,
-            '{}_removed'.format(self.accession_number)
-        )
-        Path(delete_success_path).touch()
+        Path(self.output().path).touch()
 
     def output(self):
         delete_success_path = os.path.join(
-            status_dir,
+            self.input().path,
             '{}_removed'.format(self.accession_number)
         )
         return luigi.LocalTarget(delete_success_path)
@@ -84,18 +82,24 @@ class UpdateSolrTask(luigi.Task):
     accession_number = luigi.Parameter()
 
     def requires(self):
-        return DeleteSolrAccessionTask(accession_number=self.accession_number)
+        return {
+            'solr_delete': DeleteSolrAccessionTask(
+                accession_number=self.accession_number
+            ),
+            'get_pacs': GetPacsAccessionTask(
+                accession_number=self.accession_number,
+            ),
+            'status_dir': CreateOutputDirTask()
+        }
 
     def run(self):
         base_url = parse.urljoin(get_solr_core_url(), 'update/json')
-
-        file_path = get_json_path(self.accession_number)
-
-        with open(file_path, 'rb') as f:
+        input_json = self.input()['get_pacs']
+        with input_json.open('rb') as in_file:
             file = {
                 base_url: (
-                    file_path,
-                    f,
+                    in_file.name,
+                    in_file,
                     'application/json'
                 )
             }
@@ -108,16 +112,11 @@ class UpdateSolrTask(luigi.Task):
         if not update_response.ok:
             raise ValueError(update_response.text)
 
-        update_success_path = os.path.join(
-            status_dir,
-            '{}_updated'.format(self.accession_number)
-        )
-
-        Path(update_success_path).touch()
+        Path(self.output().path).touch()
 
     def output(self):
         update_success_path = os.path.join(
-            status_dir,
+            self.input()['status_dir'].path,
             '{}_updated'.format(self.accession_number)
         )
         return luigi.LocalTarget(update_success_path)
@@ -125,22 +124,27 @@ class UpdateSolrTask(luigi.Task):
 
 class AccessionListUpdateTask(luigi.Task):
     csv_path = luigi.Parameter()
-    success_path = os.path.join(
-        status_dir,
-        'task_succeeded_{}'.format(int(time.time()))
-    )
+
+    def requires(self):
+        return CreateOutputDirTask()
 
     def run(self):
         accessions_df = pd.read_csv(self.csv_path)
         accessions_col = accessions_df.ix[:, 0]
 
         for accession_number in accessions_col:
-            yield UpdateSolrTask(accession_number)
+            yield UpdateSolrTask(str(accession_number))
 
-        pd.DataFrame([{'input_file': self.csv_path}]).to_csv(self.success_path)
+        success_path = self.output().path
+
+        pd.DataFrame([{'input_file': self.csv_path}]).to_csv(success_path)
 
     def output(self):
-        return luigi.LocalTarget(self.success_path)
+        output_path = os.path.join(
+            self.input().path,
+            'task_succeeded_{}'.format(int(time.time()))
+        )
+        return luigi.LocalTarget(output_path)
 
 
 # example usage:
