@@ -28,3 +28,15 @@ def get_solr_core_url(file='config.ini'):
     solr_core_url = config['SOLR']['CORE_PATH']
     last_char_is_slash = solr_core_url[-1] == '/'
     return solr_core_url if last_char_is_slash else solr_core_url + '/'
+
+
+def get_report_show_url(file='config.ini'):
+    """
+    Reads the configuration from the config.ini file
+    :param file: config file name (optional, default='config.ini')
+    :return: str: report settings
+    """
+    config = configparser.ConfigParser()
+    config.read(file)
+    report_show_url = ['REPORT']['REPORT_SHOW_URL']
+    return report_show_url
