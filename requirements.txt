@@ -1,2 +1,4 @@
-click
-pandas
+click==6.7
+pandas==0.21.0
+luigi==2.3.0
+requests==2.18.4
