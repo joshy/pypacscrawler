@@ -9,6 +9,7 @@ from pypacscrawler.config import get_solr_core_url
 import pypacscrawler.writer as w
 import time
 import os
+from hashlib import blake2b
 
 
 class GetPacsAccessionTask(luigi.Task):
@@ -127,12 +128,23 @@ class AccessionListUpdateTask(luigi.Task):
     def run(self):
         self.output().makedirs()
         success_path = self.output().path
-        pd.DataFrame([{'input_file': self.csv_path}]).to_csv(success_path)
+        content = pd.DataFrame([{
+            'input_file': '"{}"'.format(self.csv_path),
+            'time': '"{}"'.format(time.ctime())
+        }])
+        content.to_csv(success_path, index=False)
 
     def output(self):
+        with open(self.csv_path, 'r') as f:
+            file_content = f.read()
+
+        blake_hash = blake2b(digest_size=10)
+        blake_hash.update(file_content.encode('utf-8'))
+        hash_code = blake_hash.hexdigest()
+
         output_path = os.path.join(
             self.output_path,
-            'task_succeeded_{}'.format(int(time.time()))
+            'task_succeeded_{}.csv'.format(hash_code)
         )
         return luigi.LocalTarget(output_path)
 
