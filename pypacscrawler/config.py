@@ -30,6 +30,19 @@ def get_solr_core_url(file='config.ini'):
     return solr_core_url if last_char_is_slash else solr_core_url + '/'
 
 
+def get_solr_upload_url(file='config.ini'):
+    """
+    Reads the configuration from the config.ini file
+    :param file: config file name (optional, default='config.ini')
+    :return: str: solr settings
+    """
+    config = configparser.ConfigParser()
+    config.read(file)
+    solr_core_url = config['SOLR']['UPLOAD_URL']
+    last_char_is_slash = solr_core_url[-1] == '/'
+    return solr_core_url[:-1] if last_char_is_slash else solr_core_url
+
+
 def get_report_show_url(file='config.ini'):
     """
     Reads the configuration from the config.ini file
@@ -38,5 +51,5 @@ def get_report_show_url(file='config.ini'):
     """
     config = configparser.ConfigParser()
     config.read(file)
-    report_show_url = ['REPORT']['REPORT_SHOW_URL']
+    report_show_url = config['REPORT']['REPORT_SHOW_URL']
     return report_show_url

@@ -23,6 +23,8 @@ class UploadTask(luigi.Task):
         if r.status_code == requests.codes.ok:
             with self.output().open('w') as outfile:
                 outfile.write('DONE')
+        else:
+            r.raise_for_status()
 
     def output(self):
         month_file = os.path.basename(self.input().path)

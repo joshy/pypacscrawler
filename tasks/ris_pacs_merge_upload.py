@@ -7,7 +7,7 @@ import os
 import json
 import requests
 import luigi
-from pypacscrawler.config import get_report_show_url
+from pypacscrawler.config import get_report_show_url, get_solr_upload_url
 from tasks.day import DayTask
 
 
@@ -150,21 +150,23 @@ def merge_pacs_ris(pacs):
 
 
 class DailyUpConvertedMerged(luigi.Task):
-    url = luigi.Parameter()
     day = luigi.Parameter()
 
     def requires(self):
         return MergePacsRis(self.day)
 
     def run(self):
-        logging.debug('Uploading to url %s', self.url)
+        upload_url = get_solr_upload_url()
+        logging.debug('Uploading to url %s', upload_url)
         headers = {'content-type': 'application/json'}
         params = {'commit': 'true'}
         payload = self.input().open('rb').read()
-        r = requests.post(self.url, data=payload, params=params, headers=headers)
+        r = requests.post(upload_url, data=payload, params=params, headers=headers)
         if r.status_code == requests.codes.ok:
             with self.output().open('w') as outfile:
                 outfile.write('DONE')
+        else:
+            r.raise_for_status()
 
     def output(self):
         day_file = os.path.basename(self.input().path)
