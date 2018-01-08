@@ -102,6 +102,7 @@ logs/
 data*/
 config.ini
 .vscode
+schema/
 
 
 .mypy_cache

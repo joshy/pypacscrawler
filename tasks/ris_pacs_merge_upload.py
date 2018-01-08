@@ -158,19 +158,28 @@ class DailyUpConvertedMerged(luigi.Task):
     def run(self):
         upload_url = get_solr_upload_url()
         logging.debug('Uploading to url %s', upload_url)
-        headers = {'content-type': 'application/json'}
-        params = {'commit': 'true'}
-        payload = self.input().open('rb').read()
-        r = requests.post(upload_url, data=payload, params=params, headers=headers)
-        if r.status_code == requests.codes.ok:
-            with self.output().open('w') as outfile:
-                outfile.write('DONE')
+        with self.input().open('rb') as in_file:
+            file = {
+                'file': (
+                    in_file.name,
+                    in_file,
+                    'application/json'
+                )
+            }
+            update_response = requests.post(
+                url=upload_url,
+                files=file,
+                params={'commit': 'true'}
+            )
+
+        if not update_response.ok:
+            update_response.raise_for_status()
         else:
-            r.raise_for_status()
+            with self.output().open('w') as my_file:
+                my_file.write('Upload successful')
 
     def output(self):
-        day_file = os.path.basename(self.input().path)
-        return luigi.LocalTarget('data/%s.uploaded_day' % day_file)
+        return luigi.LocalTarget('data/solr_uploaded_%s.txt' % self.day)
 
 
 # example usage:
