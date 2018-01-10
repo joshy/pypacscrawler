@@ -17,7 +17,7 @@ class DayTask(luigi.Task):
             w.write_file(results, outfile)
 
     def output(self):
-        return luigi.LocalTarget('data/pacs_%s.json' % self.day)
+        return luigi.LocalTarget('data/%s_pacs.json' % self.day)
 
 
 if __name__ == '__main__':

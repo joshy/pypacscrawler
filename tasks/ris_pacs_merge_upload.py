@@ -28,7 +28,7 @@ class ConvertPacsFile(luigi.Task):
             json.dump(json_out, my_dict, indent=4)
 
     def output(self):
-        return luigi.LocalTarget('data/pacs_converted_%s.json' % self.day)
+        return luigi.LocalTarget('data/%s_pacs_converted.json' % self.day)
 
 
 
@@ -49,7 +49,7 @@ class MergePacsRis(luigi.Task):
             json.dump(merged_out, my_dict, indent=4)
 
     def output(self):
-        return luigi.LocalTarget('data/ris_pacs_merged_%s.json' % self.day)
+        return luigi.LocalTarget('data/%s_ris_pacs_merged.json' % self.day)
 
 
 def convert_pacs_file(json_in):
@@ -104,10 +104,8 @@ def convert_pacs_file(json_in):
             p_dict['_childDocuments_'] = []
             p_dict = add_child(p_dict, entry)
             flag = 1
-
         else:
             p_dict = add_child(p_dict, entry)
-
     return my_dict
 
 
@@ -134,7 +132,6 @@ def add_child(parent, entry):
 def merge_pacs_ris(pacs):
     """ Inssert ris report into converted pacs json file"""
     my_dict = []
-
     for entry in pacs:
         dic = {}
         dic = entry
@@ -144,9 +141,7 @@ def merge_pacs_ris(pacs):
         data = response.text
         dic['RisReport'] = data
         my_dict.append(dic)
-
     return my_dict
-
 
 
 class DailyUpConvertedMerged(luigi.Task):
@@ -179,7 +174,7 @@ class DailyUpConvertedMerged(luigi.Task):
                 my_file.write('Upload successful')
 
     def output(self):
-        return luigi.LocalTarget('data/solr_uploaded_%s.txt' % self.day)
+        return luigi.LocalTarget('data/%s_solr_uploaded.txt' % self.day)
 
 
 # example usage:

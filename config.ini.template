@@ -7,6 +7,7 @@ PEER_PORT = 104
 
 [SOLR]
 CORE_PATH = http://localhost:8983/solr/core/
+UPLOAD_URL = http://localhost:8983/solr/merge/update/json
 
 [REPORT]
 REPORT_SHOW_URL = http://meqpacscrllt01.uhbs.ch:9000/show?accession_number=
