@@ -5,7 +5,7 @@ from pypacscrawler.config import pacs_settings
 
 
 MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
-              'OT', 'PR', 'KO', 'SC', 'SD', 'PX', 'xa', 'DR']
+              'OT', 'PR', 'KO', 'SC', 'SD', 'PX', 'DR']
 
 INITIAL_TIME_RANGE = '000000-235959'
 
