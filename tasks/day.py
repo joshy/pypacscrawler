@@ -7,7 +7,7 @@ from pypacscrawler.query import query_day
 
 class DayTask(luigi.Task):
     # example run command
-    # python -m tasks.day DayTask --day 2017-01-01
+    # python -m tasks.day DayTask --day 2017-01-01 --local-scheduler
     # day format is yyyy-mm-dd
     day = luigi.Parameter()
 
