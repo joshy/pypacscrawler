@@ -1,4 +1,4 @@
-""" This file contains the routines to downlad the json files from
+""" This file contains the tasks to downlad the json files from
     the ris as well as the routines to upload these files to solr
 """
 
@@ -7,7 +7,8 @@ import os
 import json
 import requests
 import luigi
-from pypacscrawler.config import get_report_show_url, get_solr_upload_url
+from pypacscrawler.config import get_solr_upload_url
+from pypacscrawler.convert import convert_pacs_file, merge_pacs_ris
 from tasks.day import DayTask
 
 
@@ -50,98 +51,6 @@ class MergePacsRis(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget('data/%s_ris_pacs_merged.json' % self.day)
-
-
-def convert_pacs_file(json_in):
-    """ Convert: pacs_date.json -> pacs_convert_date.json
-        The converted file contains only one entry per accession number
-        structured into one parent and one child for each series
-    """
-    my_dict = []
-    flag = 0
-    acc_num = []
-    for entry in json_in:
-        if entry['AccessionNumber'] not in acc_num:
-            acc_num.append(entry['AccessionNumber'])
-            if flag == 0:
-                p_dict = {}
-            else:
-                my_dict.append(p_dict)
-                p_dict = {}
-
-            p_dict['Category'] = 'parent'
-            if entry["AccessionNumber"]:
-                p_dict["AccessionNumber"] = entry["AccessionNumber"]
-            if entry["InstanceAvailability"]:
-                p_dict["InstanceAvailability"] = entry["InstanceAvailability"]
-            if entry["InstitutionName"]:
-                p_dict["InstitutionName"] = entry["InstitutionName"]
-            if entry["Modality"]:
-                p_dict["Modality"] = entry["Modality"]
-            if entry["PatientBirthDate"]:
-                p_dict["PatientBirthDate"] = entry["PatientBirthDate"]
-            if entry["PatientID"]:
-                p_dict["PatientID"] = entry["PatientID"]
-            if entry["PatientName"]:
-                p_dict["PatientName"] = entry["PatientName"]
-            if entry["PatientSex"]:
-                p_dict["PatientSex"] = entry["PatientSex"]
-            if entry["ReferringPhysicianName"]:
-                p_dict["ReferringPhysicianName"] = entry["ReferringPhysicianName"]
-            if entry["SeriesDate"]:
-                p_dict["SeriesDate"] = entry["SeriesDate"]
-            if entry["SpecificCharacterSet"]:
-                p_dict["SpecificCharacterSet"] = entry["SpecificCharacterSet"]
-            if entry["StudyDate"]:
-                p_dict["StudyDate"] = entry["StudyDate"]
-            if entry["StudyDescription"]:
-                p_dict["StudyDescription"] = entry["StudyDescription"]
-            if entry["StudyID"]:
-                p_dict["StudyID"] = entry["StudyID"]
-            if entry["StudyInstanceUID"]:
-                p_dict["StudyInstanceUID"] = entry["StudyInstanceUID"]
-                p_dict["id"] = entry["StudyInstanceUID"]
-            p_dict['_childDocuments_'] = []
-            p_dict = add_child(p_dict, entry)
-            flag = 1
-        else:
-            p_dict = add_child(p_dict, entry)
-    return my_dict
-
-
-def add_child(parent, entry):
-    """ add child entry """
-    child_dict = {}
-    child_dict['Category'] = 'child'
-    if entry["BodyPartExamined"]:
-        child_dict["BodyPartExamined"] = entry["BodyPartExamined"]
-    if entry["SeriesDescription"]:
-        child_dict["SeriesDescription"] = entry["SeriesDescription"]
-    if entry["SeriesInstanceUID"]:
-        child_dict["SeriesInstanceUID"] = entry["SeriesInstanceUID"]
-    if entry["SeriesInstanceUID"]:
-        child_dict["id"] = entry["SeriesInstanceUID"]
-    if entry["SeriesNumber"]:
-        child_dict["SeriesNumber"] = entry["SeriesNumber"]
-    if entry["SeriesTime"]:
-        child_dict["SeriesTime"] = entry["SeriesTime"]
-    parent['_childDocuments_'].append(child_dict)
-    return parent
-
-
-def merge_pacs_ris(pacs):
-    """ Inssert ris report into converted pacs json file"""
-    my_dict = []
-    for entry in pacs:
-        dic = {}
-        dic = entry
-        aNum = str(entry['AccessionNumber'])
-        url = get_report_show_url() + aNum + '&output=text'
-        response = requests.get(url)
-        data = response.text
-        dic['RisReport'] = data
-        my_dict.append(dic)
-    return my_dict
 
 
 class DailyUpConvertedMerged(luigi.Task):

@@ -1,3 +1,11 @@
+""" This file contains the locic associated with the tasks
+    in the file 'ris_pacs_merge_upload.py'
+"""
+
+import requests
+from pypacscrawler.config import get_report_show_url
+
+
 def convert_pacs_file(json_in):
     """ Convert: pacs_date.json -> pacs_convert_date.json
         The converted file contains only one entry per accession number
@@ -46,7 +54,7 @@ def convert_pacs_file(json_in):
             p_dict = acc_dict[entry['AccessionNumber']]
             p_dict = add_child(p_dict, entry)
 
-    return acc_dict.values()
+    return list(acc_dict.values())
 
 
 def add_child(parent, entry):
@@ -67,3 +75,18 @@ def add_child(parent, entry):
         child_dict["SeriesTime"] = entry["SeriesTime"]
     parent['_childDocuments_'].append(child_dict)
     return parent
+
+
+def merge_pacs_ris(pacs):
+    """ Inssert ris report into converted pacs json file"""
+    my_dict = []
+    for entry in pacs:
+        dic = {}
+        dic = entry
+        aNum = str(entry['AccessionNumber'])
+        url = get_report_show_url() + aNum + '&output=text'
+        response = requests.get(url)
+        data = response.text
+        dic['RisReport'] = data
+        my_dict.append(dic)
+    return my_dict
