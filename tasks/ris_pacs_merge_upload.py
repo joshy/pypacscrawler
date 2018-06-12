@@ -10,13 +10,18 @@ import luigi
 from pypacscrawler.config import get_solr_upload_url
 from pypacscrawler.convert import convert_pacs_file, merge_pacs_ris
 from tasks.day import DayTask
+from tasks.accession import AccessionTask
+from tasks.util import dict_to_str
 
 
 class ConvertPacsFile(luigi.Task):
-    day = luigi.Parameter()
+    query = luigi.DictParameter()
 
     def requires(self):
-        return DayTask(self.day)
+        if 'day' in self.query:
+            return DayTask(self.query['day'])
+        elif 'acc' in self.query:
+            return AccessionTask(self.query['acc'])
 
     def run(self):
         with self.input().open('r') as daily:
@@ -29,15 +34,15 @@ class ConvertPacsFile(luigi.Task):
             json.dump(json_out, my_dict, indent=4)
 
     def output(self):
-        return luigi.LocalTarget('data/%s_pacs_converted.json' % self.day)
-
+        name = dict_to_str(self.query)
+        return luigi.LocalTarget('data/%s_pacs_converted.json' % name)
 
 
 class MergePacsRis(luigi.Task):
-    day = luigi.Parameter()
+    query = luigi.DictParameter()
 
     def requires(self):
-        return ConvertPacsFile(self.day)
+        return ConvertPacsFile(self.query)
 
     def run(self):
         with self.input().open('r') as daily:
@@ -50,31 +55,23 @@ class MergePacsRis(luigi.Task):
             json.dump(merged_out, my_dict, indent=4)
 
     def output(self):
-        return luigi.LocalTarget('data/%s_ris_pacs_merged.json' % self.day)
+        name = dict_to_str(self.query)
+        return luigi.LocalTarget('data/%s_ris_pacs_merged.json' % name)
 
 
 class DailyUpConvertedMerged(luigi.Task):
-    day = luigi.Parameter()
+    query = luigi.DictParameter()
 
     def requires(self):
-        return MergePacsRis(self.day)
+        return MergePacsRis(self.query)
 
     def run(self):
         upload_url = get_solr_upload_url()
         logging.debug('Uploading to url %s', upload_url)
         with self.input().open('rb') as in_file:
-            file = {
-                'file': (
-                    in_file.name,
-                    in_file,
-                    'application/json'
-                )
-            }
+            file = {'file': (in_file.name, in_file, 'application/json')}
             update_response = requests.post(
-                url=upload_url,
-                files=file,
-                params={'commit': 'true'}
-            )
+                url=upload_url, files=file, params={'commit': 'true'})
 
         if not update_response.ok:
             update_response.raise_for_status()
@@ -83,7 +80,8 @@ class DailyUpConvertedMerged(luigi.Task):
                 my_file.write('Upload successful')
 
     def output(self):
-        return luigi.LocalTarget('data/%s_solr_uploaded.txt' % self.day)
+        name = dict_to_str(self.query)
+        return luigi.LocalTarget('data/%s_solr_uploaded.txt' % name)
 
 
 # example usage:

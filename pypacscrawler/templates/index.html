@@ -6,7 +6,9 @@
   <link rel="stylesheet" href="{{url_for('static', filename='css/tachyons.min.css') }}">
 </head>
 
-<body class="w-100">
-   {{result}}
+<body class="w-100 sans-serif">
+    {% include 'partials/header.html' %}
+    {% block content %}
+    {% endblock content %}
 </body>
 </html>

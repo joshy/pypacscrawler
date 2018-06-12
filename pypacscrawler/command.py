@@ -61,8 +61,3 @@ def year_start_end(year):
     start = date(y.year, 1, 1)
     end = date(y.year, 12, 31)
     return start, end
-
-
-def add_accession(query, accession_number):
-    """ Adds the Accession number to the query. """
-    return query + ' -k AccessionNumber=' + accession_number

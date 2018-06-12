@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.0.6 - 12.06.2018
+ * Flasiky PyPacsCrawler
+
 ## v0.0.5 - 18.10.2017
  * Luigi tasks created for day and month download
 

@@ -1,16 +1,19 @@
 import flask
+import configparser
 
 
-def pacs_settings(app):
+def pacs_settings(config):
     """
     Reads the configuration from the default flask instance folder
-    :param the flask app
+    :param PACS configuration
     :return: str: PACS settings
     """
-    ae_called = app.config['AE_CALLED']
-    ae_peer_address = app.config['PEER_ADDRESS']
-    ae_peer_port = app.config['PEER_PORT']
-    ae_title = app.config['AE_TITLE']
+    if 'PACS' in config:
+        config = config['PACS']
+    ae_called = config['AE_CALLED']
+    ae_peer_address = config['PEER_ADDRESS']
+    ae_peer_port = config['PEER_PORT']
+    ae_title = config['AE_TITLE']
     return '-aec {} {} {} -aet {}'.format(ae_called, ae_peer_address,
                                           ae_peer_port, ae_title)
 
@@ -47,7 +50,10 @@ def get_report_show_url(file='config.ini'):
     :param file: config file name (optional, default='config.ini')
     :return: str: report settings
     """
-    config = configparser.ConfigParser()
-    config.read(file)
-    report_show_url = config['REPORT']['REPORT_SHOW_URL']
+    if type(file) is flask.config.Config:
+        report_show_url = file['REPORT_SHOW_URL']
+    else:
+        config = configparser.ConfigParser()
+        config.read(file)
+        report_show_url = config['REPORT']['REPORT_SHOW_URL']
     return report_show_url

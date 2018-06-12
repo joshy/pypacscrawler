@@ -9,9 +9,9 @@ if not os.path.exists(LOG_DIR):
 
 daiquiri.setup(level=logging.DEBUG,
     outputs=(
-        daiquiri.output.File('logs/repo-errors.log', level=logging.ERROR),
+        daiquiri.output.File('logs/pypacscrawler-errors.log', level=logging.ERROR),
         daiquiri.output.RotatingFile(
-            'logs/repo-debug.log',
+            'logs/pypacscrawler-debug.log',
             level=logging.DEBUG,
             # 10 MB
             max_size_bytes=10000000)

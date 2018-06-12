@@ -14,8 +14,8 @@ from pypacscrawler.executor import run
 def query_accession_number(config, accession_number):
     query = basic_query(config)
     query = add_accession_number(query, accession_number)
-    result, size = run(query)
-    return result, size
+    result, _ = run(query)
+    return [result]
 
 
 def get_months_of_year(year: str) -> List[Dict[str, str]]:
@@ -24,13 +24,13 @@ def get_months_of_year(year: str) -> List[Dict[str, str]]:
     return [d.strftime('%Y-%m') for d in pd.date_range(start, end, freq='MS')]
 
 
-def query_month(year_month: str) -> List[Dict[str, str]]:
+def query_month(config, year_month: str) -> List[Dict[str, str]]:
     start = datetime.datetime.strptime(year_month, '%Y-%m')
     end = start + pd.tseries.offsets.MonthEnd()
     results = []
     for day in pd.date_range(start, end):
         for mod in MODALITIES:
-            results.extend(query_day_extended(mod, day, INITIAL_TIME_RANGE))
+            results.extend(query_day_extended(config, mod, day, INITIAL_TIME_RANGE))
     return results
 
 
