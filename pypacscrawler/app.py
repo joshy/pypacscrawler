@@ -32,25 +32,16 @@ def to_date(date_as_int):
 @app.route('/')
 def main():
     return render_template(
-        'index.html', version=app.config['VERSION'], result=result)
+        'index.html', version=app.config['VERSION'])
 
 
 @app.route('/search')
 def search():
     accession_number = request.args.get('accession_number', '')
-    #result, length = query_accession_number(app.config, accession_number)
-    #result_sorted = sorted(result, key=lambda k: int(k['SeriesNumber']))
-
-    #url = get_report_show_url(app.config) + accession_number + '&output=text'
-    #response = requests.get(url)
-    #report = response.text
-
-    #luigi.build([MergePacsRis({'acc': accession_number})], local_scheduler=True)
-
     w = luigi.worker.Worker(no_install_shutdown_handler=True)
     task = MergePacsRis({'acc': accession_number})
     w.add(task)
-    w.run()
+    task_result = w.run()
 
     with task.output().open('r') as r:
         results = json.load(r)
