@@ -1,6 +1,7 @@
-import luigi
 import configparser
+from itertools import chain
 
+import luigi
 import pypacscrawler.writer as w
 from pypacscrawler.query import query_accession_number
 
@@ -12,7 +13,9 @@ class AccessionTask(luigi.Task):
 
     def run(self):
         config = configparser.ConfigParser()
-        config.read_file(open('config.ini'))
+        filename ='./instance/config.cfg'
+        with open(filename) as fp:
+            config.read_file(chain(['[PACS]'], fp), source=filename)
         results = query_accession_number(config, self.accession_number)
         with self.output().open('w') as outfile:
             w.write_file(results, outfile)

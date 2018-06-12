@@ -41,17 +41,23 @@ def search():
     w = luigi.worker.Worker(no_install_shutdown_handler=True)
     task = MergePacsRis({'acc': accession_number})
     w.add(task)
-    task_result = w.run()
+    w.run()
+    if task.complete():
+        with task.output().open('r') as r:
+            results = json.load(r)
+            for result in results:
+                result['_childDocuments_'] = sorted(
+                    result['_childDocuments_'],
+                    key=lambda k: int(k['SeriesNumber']))
 
-    with task.output().open('r') as r:
-        results = json.load(r)
-        for result in results:
-            result['_childDocuments_'] = sorted(
-                result['_childDocuments_'],
-                key=lambda k: int(k['SeriesNumber']))
-
-    return render_template(
-        'result.html',
-        accession_number=accession_number,
-        version=app.config['VERSION'],
-        results=results)
+        return render_template(
+            'result.html',
+            accession_number=accession_number,
+            version=app.config['VERSION'],
+            results=results)
+    else:
+        return render_template(
+            'error.html',
+            accession_number=accession_number,
+            version=app.config['VERSION'],
+            results={})

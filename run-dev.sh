@@ -1,2 +1,2 @@
 #!/bin/sh
-nodemon --exec "python3" runserver.py
+nodemon --exec "python" runserver.py
