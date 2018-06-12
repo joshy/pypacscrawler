@@ -103,5 +103,7 @@ data*/
 config.ini
 .vscode
 instance
+schema/
+
 
 .mypy_cache

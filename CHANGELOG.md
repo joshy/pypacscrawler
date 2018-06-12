@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.0.5 - 18.10.2017
+ * Luigi tasks created for day and month download
+
+## v0.0.4 - 14.08.2017
+ * works now with dcmtk 3.6.2
+
 ## v0.0.3 - 05.06.2017
  * csv and json files are produced
 

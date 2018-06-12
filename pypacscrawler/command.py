@@ -5,12 +5,12 @@ from pypacscrawler.config import pacs_settings
 
 
 MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
-              'OT', 'PR', 'KO', 'SC', 'SD', 'PX', 'xa', 'DR']
+              'OT', 'PR', 'KO', 'SC', 'SD', 'PX', 'DR']
 
 INITIAL_TIME_RANGE = '000000-235959'
 
 
-def basic_query(app):
+def basic_query(configuration):
     """Returns a basic findscu command with no query parameters set."""
     return '''findscu -to 6000 -v -S -k 0008,0052=SERIES {}
            -k PatientName
@@ -29,7 +29,9 @@ def basic_query(app):
            -k ReferringPhysicianName
            -k InstitutionName
            -k StudyInstanceUID
-           -k SeriesInstanceUID'''.format(pacs_settings(app))
+           -k SeriesInstanceUID
+           -k SeriesDate
+           -k SeriesTime'''.format(pacs_settings(configuration))
 
 
 def add_modality(query, modality):
@@ -59,3 +61,8 @@ def year_start_end(year):
     start = date(y.year, 1, 1)
     end = date(y.year, 12, 31)
     return start, end
+
+
+def add_accession(query, accession_number):
+    """ Adds the Accession number to the query. """
+    return query + ' -k AccessionNumber=' + accession_number

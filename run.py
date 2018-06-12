@@ -5,7 +5,7 @@ from logging.config import fileConfig
 
 import pypacscrawler.command as c
 import pypacscrawler.writer as w
-from pypacscrawler.query import query_day, query_month, query_year
+from pypacscrawler.query import query_day_extended, get_months_of_year, query_month
 
 
 @click.command()
@@ -25,8 +25,11 @@ def cli(year, month, day, mod,):
 
     if year:
         logging.info('Runnig year %s', year)
-        results = query_year(year)
-        w.write_results(results, month, day, mod)
+        months = get_months_of_year(year)
+        for month in months:
+            logging.info('Running month %s', month)
+            results = query_month(month)
+            w.write_results(results, month, day, mod)
     elif month:
         logging.info('Running month %s', month)
         results = query_month(month)
@@ -34,7 +37,7 @@ def cli(year, month, day, mod,):
     else:
         logging.info('Running day %s', day)
         query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
-        results = query_day(mod, query_date, c.INITIAL_TIME_RANGE)
+        results = query_day_extended(mod, query_date, c.INITIAL_TIME_RANGE)
         w.write_results(results, month, day, mod)
 
 

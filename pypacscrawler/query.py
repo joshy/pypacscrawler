@@ -11,38 +11,39 @@ from pypacscrawler.time import split
 from pypacscrawler.executor import run
 
 
-def query_accession_number(app, accession_number):
-    query = basic_query(app)
+def query_accession_number(config, accession_number):
+    query = basic_query(config)
     query = add_accession_number(query, accession_number)
     result, size = run(query)
     return result, size
 
 
-def query_year(year):
-    # type: (str) -> List[Dict[str, str]]
+def get_months_of_year(year: str) -> List[Dict[str, str]]:
     start, end = year_start_end(year)
     # MS is month start frequency
-    months = pd.date_range(start, end, freq='MS')
-    results = []
-    for month in months:
-        results.extend(query_month(month.strftime('%Y-%m')))
-    return results
+    return [d.strftime('%Y-%m') for d in pd.date_range(start, end, freq='MS')]
 
 
-def query_month(year_month):
-    # type: (str) -> List[Dict[str, str]]
+def query_month(year_month: str) -> List[Dict[str, str]]:
     start = datetime.datetime.strptime(year_month, '%Y-%m')
     end = start + pd.tseries.offsets.MonthEnd()
     results = []
     for day in pd.date_range(start, end):
         for mod in MODALITIES:
-            results.extend(query_day(mod, day, INITIAL_TIME_RANGE))
+            results.extend(query_day_extended(mod, day, INITIAL_TIME_RANGE))
     return results
 
 
-def query_day(app, mod, day, time_range):
-    # type: (str, str, str) -> List[Dict[str, str]]
-    query = prepare_query(app, mod, day, time_range)
+def query_day(config, day: str) -> List[Dict[str, str]]:
+    query_date = datetime.datetime.strptime(day, '%Y-%m-%d')
+    results = []
+    for mod in MODALITIES:
+        results.extend(query_day_extended(config, mod, query_date, INITIAL_TIME_RANGE))
+    return results
+
+
+def query_day_extended(config, mod: str, day: datetime.datetime, time_range: str) -> List[Dict[str, str]]:
+    query = prepare_query(config, mod, day, time_range)
     result, size = run(query)
 
     if size < 500:
@@ -55,11 +56,11 @@ def query_day(app, mod, day, time_range):
         logging.debug('results >= 500 for {} {} {}, splitting'
               .format(mod, day, time_range))
         l, r = split(time_range)
-        return query_day(mod, day, l) + query_day(mod, day, r)
+        return query_day_extended(config, mod, day, l) + query_day_extended(config, mod, day, r)
 
 
-def prepare_query(app, mod, day, time_range):
-    query = add_day(basic_query(app), day)
+def prepare_query(config, mod, day, time_range):
+    query = add_day(basic_query(config), day)
     query = add_modality(query, mod)
     query = add_time(query, time_range)
     return query

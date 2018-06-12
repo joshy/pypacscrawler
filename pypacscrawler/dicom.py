@@ -52,7 +52,7 @@ TAGS = {
     '(0008,0054)': RETRIEVE_AE_TITLE
 }
 
-START_OR_END = re.compile(r'^W:\s*$')
+START_OR_END = re.compile(r'^I:\s*$')
 
 
 def get_results(strings: List[str]) -> List[Dict[str, str]]:
@@ -81,14 +81,14 @@ def _sanity_check(single_result: Dict[str, str]):
 
 def _is_start_or_end(line: str) -> bool:
     """ Returns True if it is the start or end of a DICOM header.
-        Checks for an Line 'W:<empty space>'
+        Checks for an Line 'I:<empty space>'
     """
     match = START_OR_END.match(line)
     return match is not None
 
 
 def _is_valid(line: str) -> bool:
-    return line.startswith('W:') \
+    return line.startswith('I:') \
            and '(' in line and ')' in line and '[' in line and ']' in line
 
 
@@ -102,7 +102,7 @@ def _get_tag(line: str) -> str:
     between the first round brackets and then makes a lookup to get the
     tag value.
     For example on this line
-        W: (0010,0040) CS [F ]
+        I: (0010,0040) CS [F ]
     tag value would be (0010,0040) and resolved would be 'Modality'.
     """
     return TAGS[line[3:14]]
@@ -117,4 +117,4 @@ def _get_value(line: str) -> str:
     """
     start = line.find('[') + 1
     end = line.rfind(']')
-    return line[start:end].strip()
+    return line[start:end].strip(' \t\r\n\0')
