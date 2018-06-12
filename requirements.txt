@@ -6,3 +6,4 @@ requests
 schedule
 jsmin
 daiquiri
+luigi
