@@ -48,6 +48,11 @@ def add_time(query, time):
     return query + ' -k SeriesTime=' + time
 
 
+def add_accession_number(query, accession_number):
+    """ Limit by Accession Number """
+    return query + ' -k AccessionNumber=' + accession_number
+
+
 def year_start_end(year):
     # type: (str) -> Tuple[date, date]
     y = datetime.strptime(year, '%Y')
