@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="pypacscrawler",
-    version='0.0.4',
+    version='0.0.5',
     pymodules=['run'],
     install_requires=[
         'pandas',
