@@ -10,6 +10,15 @@ MODALITIES = ['CT', 'MR', 'PT', 'CR', 'XA', 'SR', 'NM', 'MG', 'US', 'DX', 'RF',
 INITIAL_TIME_RANGE = '000000-235959'
 
 
+def study_uid_query(configuration, accession_number):
+    """It is not possible to query by accession number therefore we need
+    to first fetch the studyinstanceuid.
+    """
+    return '''findscu -to 6000 -v -S -k 0008,0052=STUDY {}
+           -k StudyInstanceUID
+           -k AccessionNumber={}'''.format(pacs_settings(configuration), accession_number)
+
+
 def basic_query(configuration):
     """Returns a basic findscu command with no query parameters set."""
     return '''findscu -to 6000 -v -S -k 0008,0052=SERIES {}
@@ -52,9 +61,9 @@ def add_time(query, time):
     return query + ' -k SeriesTime=' + time
 
 
-def add_accession_number(query, accession_number):
-    """ Limit by Accession Number """
-    return query + ' -k AccessionNumber=' + accession_number
+def add_study_uid(query, study_uid):
+    """ Limit by Accession Number with StudyInstanceUID """
+    return query + ' -k StudyInstanceUID=' + study_uid
 
 
 def year_start_end(year):

@@ -5,15 +5,22 @@ import datetime as datetime
 import pandas as pd
 
 from typing import List, Dict
-from pypacscrawler.command import basic_query, add_time, add_day, \
-    add_modality, year_start_end, add_accession_number, MODALITIES, INITIAL_TIME_RANGE
+from pypacscrawler.command import basic_query, study_uid_query,add_study_uid,  add_time, add_day, \
+    add_modality, year_start_end, MODALITIES, INITIAL_TIME_RANGE
 from pypacscrawler.time import split
 from pypacscrawler.executor import run
 
 
-def query_accession_number(config, accession_number):
+def query_for_study_uid(config, accession_number):
+    query = study_uid_query(config, accession_number)
+    result, _ = run(query)
+    print(result)
+    return result[0]['StudyInstanceUID']
+
+
+def query_accession_number(config, study_uid):
     query = basic_query(config)
-    query = add_accession_number(query, accession_number)
+    query = add_study_uid(query, study_uid)
     result, _ = run(query)
     return [result]
 
