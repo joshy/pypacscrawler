@@ -1,7 +1,11 @@
 # Changelog
 
-## v0.0.6 - 12.06.2018
+
+## v0.0.7 - 08.08.2018
  * Flasiky PyPacsCrawler
+
+## v0.0.6 - 29.06.2017
+ * StationName and ProtocolName added to the query
 
 ## v0.0.5 - 18.10.2017
  * Luigi tasks created for day and month download

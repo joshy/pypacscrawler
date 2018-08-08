@@ -3,6 +3,7 @@
 """
 
 import requests
+from datetime import datetime, date
 from pypacscrawler.config import get_report_show_url
 
 
@@ -16,37 +17,34 @@ def convert_pacs_file(json_in):
         if entry['AccessionNumber'] not in acc_dict:
             p_dict = {}
             p_dict['Category'] = 'parent'
-            if entry["AccessionNumber"]:
+            if (entry["AccessionNumber"] and entry["PatientID"]):
                 p_dict["AccessionNumber"] = entry["AccessionNumber"]
-            if entry["InstanceAvailability"]:
-                p_dict["InstanceAvailability"] = entry["InstanceAvailability"]
-            if entry["InstitutionName"]:
-                p_dict["InstitutionName"] = entry["InstitutionName"]
+                p_dict["PatientID"] = entry["PatientID"]
+                p_dict["id"] = entry["PatientID"] + '-' + entry["AccessionNumber"]
+
+            p_dict["InstitutionName"] = entry["InstitutionName"]
             if entry["Modality"]:
                 p_dict["Modality"] = entry["Modality"]
-            if entry["PatientBirthDate"]:
+            if ("PatientBirthDate" in entry and "SeriesDate" in entry):
                 p_dict["PatientBirthDate"] = entry["PatientBirthDate"]
-            if entry["PatientID"]:
-                p_dict["PatientID"] = entry["PatientID"]
+                p_dict["SeriesDate"] = entry["SeriesDate"]
+                today = datetime.strptime(entry["SeriesDate"], "%Y%m%d")
+                birthdate = datetime.strptime(entry["PatientBirthDate"], "%Y%m%d")
+                p_dict["PatientAge"] = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
             if entry["PatientName"]:
                 p_dict["PatientName"] = entry["PatientName"]
             if entry["PatientSex"]:
                 p_dict["PatientSex"] = entry["PatientSex"]
             if entry["ReferringPhysicianName"]:
                 p_dict["ReferringPhysicianName"] = entry["ReferringPhysicianName"]
-            if entry["SeriesDate"]:
-                p_dict["SeriesDate"] = entry["SeriesDate"]
-            if "SpecificCharacterSet" in entry:
-                p_dict["SpecificCharacterSet"] = entry["SpecificCharacterSet"]
+
+            p_dict["SeriesDate"] = entry["SeriesDate"]
             if entry["StudyDate"]:
                 p_dict["StudyDate"] = entry["StudyDate"]
             if entry["StudyDescription"]:
                 p_dict["StudyDescription"] = entry["StudyDescription"]
             if entry["StudyID"]:
                 p_dict["StudyID"] = entry["StudyID"]
-            if entry["StudyInstanceUID"]:
-                p_dict["StudyInstanceUID"] = entry["StudyInstanceUID"]
-                p_dict["id"] = entry["StudyInstanceUID"]
             p_dict['_childDocuments_'] = []
             p_dict = add_child(p_dict, entry)
             acc_dict[entry['AccessionNumber']] = p_dict
@@ -65,14 +63,15 @@ def add_child(parent, entry):
         child_dict["BodyPartExamined"] = entry["BodyPartExamined"]
     if entry["SeriesDescription"]:
         child_dict["SeriesDescription"] = entry["SeriesDescription"]
+    if entry["StudyInstanceUID"]:
+        child_dict["StudyInstanceUID"] = entry["StudyInstanceUID"]
     if entry["SeriesInstanceUID"]:
         child_dict["SeriesInstanceUID"] = entry["SeriesInstanceUID"]
     if entry["SeriesInstanceUID"]:
         child_dict["id"] = entry["SeriesInstanceUID"]
     if entry["SeriesNumber"]:
         child_dict["SeriesNumber"] = entry["SeriesNumber"]
-    if entry["SeriesTime"]:
-        child_dict["SeriesTime"] = entry["SeriesTime"]
+    child_dict["SeriesTime"] = entry["SeriesTime"]
     parent['_childDocuments_'].append(child_dict)
     return parent
 

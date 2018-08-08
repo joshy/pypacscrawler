@@ -28,6 +28,8 @@ def basic_query(configuration):
            -k InstanceNumber
            -k ReferringPhysicianName
            -k InstitutionName
+           -k StationName
+           -k ProtocolName
            -k StudyInstanceUID
            -k SeriesInstanceUID
            -k SeriesDate
