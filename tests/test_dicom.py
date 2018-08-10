@@ -5,7 +5,7 @@ from pypacscrawler.dicom import _is_start_or_end, _get_tag, _get_value, get_resu
 
 class DicomTest(unittest.TestCase):
     def test_start(self):
-        line = 'I:'
+        line = 'I: ---------------------------'
         start = _is_start_or_end(line)
         self.assertEqual(True, start)
 

@@ -72,10 +72,10 @@ def get_results(strings: List[str]) -> List[Dict[str, str]]:
         if _is_valid(line):
             single_result[_get_tag(line)] = _get_value(line)
         if _is_start_or_end(line) and single_result:
-            if _sanity_check(single_result):
-                result.append(single_result.copy())
+            result.append(single_result.copy())
             single_result.clear()
-    return result
+    result.append(single_result.copy())
+    return result[1:]
 
 
 def _sanity_check(single_result: Dict[str, str]):
@@ -84,11 +84,8 @@ def _sanity_check(single_result: Dict[str, str]):
 
 
 def _is_start_or_end(line: str) -> bool:
-    """ Returns True if it is the start or end of a DICOM header.
-        Checks for an Line 'I:<empty space>'
-    """
-    match = START_OR_END.match(line)
-    return match is not None
+    """ Returns True if it is the start or end of a DICOM header. """
+    return line.startswith('I: ---------------------------')
 
 
 def _is_valid(line: str) -> bool:
