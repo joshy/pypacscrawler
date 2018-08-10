@@ -1,10 +1,9 @@
-import configparser
-from itertools import chain
-
 import luigi
 import pypacscrawler.writer as w
 from pypacscrawler.query import query_accession_number
 from tasks.study_uid import StudyUIDTask
+from tasks.util import load_config
+
 
 class AccessionTask(luigi.Task):
     # example run command
@@ -15,15 +14,10 @@ class AccessionTask(luigi.Task):
         return StudyUIDTask(self.accession_number)
 
     def run(self):
-        config = configparser.ConfigParser()
-        filename ='./instance/config.cfg'
-        with open(filename) as fp:
-            config.read_file(chain(['[PACS]'], fp), source=filename)
+        config = load_config()
         with self.input().open('r') as f:
             study_uid = f.read()
 
-        print('------------------------------------------------')
-        print(study_uid)
         results = query_accession_number(config, study_uid)
         with self.output().open('w') as outfile:
             w.write_file(results, outfile)

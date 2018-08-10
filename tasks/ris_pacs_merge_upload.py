@@ -11,7 +11,7 @@ from pypacscrawler.config import get_solr_upload_url
 from pypacscrawler.convert import convert_pacs_file, merge_pacs_ris
 from tasks.day import DayTask
 from tasks.accession import AccessionTask
-from tasks.util import dict_to_str
+from tasks.util import dict_to_str, load_config
 
 
 class ConvertPacsFile(luigi.Task):
@@ -66,7 +66,8 @@ class DailyUpConvertedMerged(luigi.Task):
         return MergePacsRis(self.query)
 
     def run(self):
-        upload_url = get_solr_upload_url()
+        config = load_config()
+        upload_url = get_solr_upload_url(config)
         logging.debug('Uploading to url %s', upload_url)
         with self.input().open('rb') as in_file:
             file = {'file': (in_file.name, in_file, 'application/json')}

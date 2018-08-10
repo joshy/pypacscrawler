@@ -1,7 +1,7 @@
 import luigi
-
 import pypacscrawler.writer as w
 from pypacscrawler.query import query_month
+from tasks.util import load_config
 
 
 class MonthTask(luigi.Task):
@@ -9,7 +9,8 @@ class MonthTask(luigi.Task):
     month = luigi.Parameter()
 
     def run(self):
-        results = query_month(self.month)
+        config = load_config()
+        results = query_month(config, self.month)
         with self.output().open('w') as outfile:
             w.write_file(results, outfile)
 

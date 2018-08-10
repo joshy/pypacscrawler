@@ -1,4 +1,3 @@
-import datetime
 import json
 import logging
 import os
@@ -12,13 +11,20 @@ from flask_assets import Bundle, Environment
 
 from pypacscrawler.config import get_report_show_url
 from pypacscrawler.query import query_accession_number
-from tasks.ris_pacs_merge_upload import MergePacsRis
+from tasks.ris_pacs_merge_upload import MergePacsRis, DailyUpConvertedMerged
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('pypacscrawler.default_config')
 app.config.from_pyfile('config.cfg')
 version = app.config['VERSION'] = '1.0.0'
 
+
+assets = Environment(app)
+js = Bundle("js/jquery-3.3.1.min.js",
+            "js/jquery.noty.packaged.min.js",
+            "js/script.js",
+            filters='jsmin', output='gen/packed.js')
+assets.register('js_all', js)
 
 @app.template_filter('to_date')
 def to_date(date_as_int):
@@ -61,3 +67,22 @@ def search():
             accession_number=accession_number,
             version=app.config['VERSION'],
             results={})
+
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    data = request.get_json(force=True)
+    accession_number = data.get('acc', '')
+    logging.debug('Accession number to upload is: {}'.format(accession_number))
+    if not accession_number:
+        return 'no accession number given', 400
+
+    w = luigi.worker.Worker(no_install_shutdown_handler=True)
+    task = DailyUpConvertedMerged({'acc': accession_number})
+    w.add(task)
+    w.run()
+    headers = {'content-type': "application/json"}
+    if task.complete():
+        return json.dumps({'status':'ok'})
+    else:
+        return 'Task error', 400

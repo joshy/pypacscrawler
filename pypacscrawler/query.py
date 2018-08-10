@@ -14,8 +14,9 @@ from pypacscrawler.executor import run
 def query_for_study_uid(config, accession_number):
     query = study_uid_query(config, accession_number)
     result, _ = run(query)
-    print(result)
-    return result[0]['StudyInstanceUID']
+    if result:
+        return result[0]['StudyInstanceUID']
+    raise LookupError('No result found for accession number: {}'.format(accession_number))
 
 
 def query_accession_number(config, study_uid):

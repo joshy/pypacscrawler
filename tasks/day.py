@@ -1,8 +1,7 @@
 import luigi
-from luigi.format import UTF8, Text, TextFormat
-
 import pypacscrawler.writer as w
 from pypacscrawler.query import query_day
+from tasks.util import load_config
 
 
 class DayTask(luigi.Task):
@@ -12,7 +11,8 @@ class DayTask(luigi.Task):
     day = luigi.Parameter()
 
     def run(self):
-        results = query_day(self.day)
+        config = load_config()
+        results = query_day(config, self.day)
         with self.output().open('w') as outfile:
             w.write_file(results, outfile)
 
