@@ -34,10 +34,5 @@ def get_report_show_url(file='config.ini'):
     :param file: config file name (optional, default='config.ini')
     :return: str: report settings
     """
-    if type(file) is flask.config.Config:
-        report_show_url = file['REPORT_SHOW_URL']
-    else:
-        config = configparser.ConfigParser()
-        config.read(file)
-        report_show_url = config['REPORT']['REPORT_SHOW_URL']
+    report_show_url = file['REPORT_SHOW_URL']
     return report_show_url

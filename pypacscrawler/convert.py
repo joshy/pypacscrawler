@@ -2,9 +2,12 @@
     in the file 'ris_pacs_merge_upload.py'
 """
 
+from datetime import date, datetime
+
 import requests
-from datetime import datetime, date
+
 from pypacscrawler.config import get_report_show_url
+from tasks.util import dict_to_str, load_config
 
 
 def convert_pacs_file(json_in):
@@ -33,7 +36,7 @@ def convert_pacs_file(json_in):
                 p_dict["PatientAge"] = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
             if entry["PatientName"]:
                 p_dict["PatientName"] = entry["PatientName"]
-            if entry["PatientSex"]:
+            if "PatientSex" in entry:
                 p_dict["PatientSex"] = entry["PatientSex"]
             if entry["ReferringPhysicianName"]:
                 p_dict["ReferringPhysicianName"] = entry["ReferringPhysicianName"]
@@ -78,12 +81,13 @@ def add_child(parent, entry):
 
 def merge_pacs_ris(pacs):
     """ Inssert ris report into converted pacs json file"""
+    config = load_config()
     my_dict = []
     for entry in pacs:
         dic = {}
         dic = entry
         aNum = str(entry['AccessionNumber'])
-        url = get_report_show_url() + aNum + '&output=text'
+        url = get_report_show_url(config) + aNum + '&output=text'
         response = requests.get(url)
         data = response.text
         dic['RisReport'] = data
