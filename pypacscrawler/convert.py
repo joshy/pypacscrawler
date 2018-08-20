@@ -24,26 +24,22 @@ def convert_pacs_file(json_in):
                 p_dict["AccessionNumber"] = entry["AccessionNumber"]
                 p_dict["PatientID"] = entry["PatientID"]
                 p_dict["id"] = entry["PatientID"] + '-' + entry["AccessionNumber"]
-
-            p_dict["InstitutionName"] = entry["InstitutionName"]
-            if entry["Modality"]:
-                p_dict["Modality"] = entry["Modality"]
+            if "InstitutionName" in entry:
+                p_dict["InstitutionName"] = entry["InstitutionName"]
             if ("PatientBirthDate" in entry and "SeriesDate" in entry):
                 p_dict["PatientBirthDate"] = entry["PatientBirthDate"]
                 p_dict["SeriesDate"] = entry["SeriesDate"]
                 today = datetime.strptime(entry["SeriesDate"], "%Y%m%d")
                 birthdate = datetime.strptime(entry["PatientBirthDate"], "%Y%m%d")
                 p_dict["PatientAge"] = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
-            if entry["PatientName"]:
+            if "PatientName" in entry:
                 p_dict["PatientName"] = entry["PatientName"]
             if "PatientSex" in entry:
                 p_dict["PatientSex"] = entry["PatientSex"]
-            if entry["ReferringPhysicianName"]:
+            if "ReferringPhysicianName" in entry:
                 p_dict["ReferringPhysicianName"] = entry["ReferringPhysicianName"]
-
             p_dict["SeriesDate"] = entry["SeriesDate"]
-            if entry["StudyDate"]:
-                p_dict["StudyDate"] = entry["StudyDate"]
+            p_dict["StudyDate"] = entry["StudyDate"]
             if entry["StudyDescription"]:
                 p_dict["StudyDescription"] = entry["StudyDescription"]
             if entry["StudyID"]:
@@ -62,25 +58,21 @@ def add_child(parent, entry):
     """ add child entry """
     child_dict = {}
     child_dict['Category'] = 'child'
-    if entry["BodyPartExamined"]:
-        child_dict["BodyPartExamined"] = entry["BodyPartExamined"]
-    if entry["SeriesDescription"]:
-        child_dict["SeriesDescription"] = entry["SeriesDescription"]
-    if entry["StudyInstanceUID"]:
-        child_dict["StudyInstanceUID"] = entry["StudyInstanceUID"]
-    if entry["SeriesInstanceUID"]:
-        child_dict["SeriesInstanceUID"] = entry["SeriesInstanceUID"]
-    if entry["SeriesInstanceUID"]:
-        child_dict["id"] = entry["SeriesInstanceUID"]
-    if entry["SeriesNumber"]:
-        child_dict["SeriesNumber"] = entry["SeriesNumber"]
+    child_dict["Modality"] = entry["Modality"]
+    child_dict["SeriesInstanceUID"] = entry["SeriesInstanceUID"]
     child_dict["SeriesTime"] = entry["SeriesTime"]
+    if "BodyPartExamined" in entry:
+        child_dict["BodyPartExamined"] = entry["BodyPartExamined"]
+    if "SeriesDescription" in entry:
+        child_dict["SeriesDescription"] = entry["SeriesDescription"]
+    if "SeriesNumber" in entry:
+        child_dict["SeriesNumber"] = entry["SeriesNumber"]
     parent['_childDocuments_'].append(child_dict)
     return parent
 
 
 def merge_pacs_ris(pacs):
-    """ Inssert ris report into converted pacs json file"""
+    """ Insert ris report into converted pacs json file"""
     config = load_config()
     my_dict = []
     for entry in pacs:
