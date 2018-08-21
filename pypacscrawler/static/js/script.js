@@ -4,8 +4,10 @@ $(function () {
     $('#upload-button').on('click', function (e) {
         e.preventDefault();
         var acc = $('#search-input').val();
+        var day = $('#day-input').val();
         var data = {
-          'acc': acc
+          'acc': acc,
+          'day': day
         }
         $.ajax({
           type: 'POST',

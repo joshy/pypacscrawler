@@ -44,8 +44,12 @@ def main():
 @app.route('/search')
 def search():
     accession_number = request.args.get('accession_number', '')
+    day = request.args.get('day', '')
     w = luigi.worker.Worker(no_install_shutdown_handler=True)
-    task = MergePacsRis({'acc': accession_number})
+    if accession_number:
+        task = MergePacsRis({'acc': accession_number})
+    elif day:
+        task = MergePacsRis({'day': day})
     w.add(task)
     w.run()
     if task.complete():
@@ -59,12 +63,14 @@ def search():
         return render_template(
             'result.html',
             accession_number=accession_number,
+            day=day,
             version=app.config['VERSION'],
             results=results)
     else:
         return render_template(
             'error.html',
             accession_number=accession_number,
+            day=day,
             version=app.config['VERSION'],
             results={})
 
@@ -73,12 +79,18 @@ def search():
 def upload():
     data = request.get_json(force=True)
     accession_number = data.get('acc', '')
+    day = data.get('day', '')
     logging.debug('Accession number to upload is: {}'.format(accession_number))
-    if not accession_number:
-        return 'no accession number given', 400
+    if not any([accession_number, day]):
+        return 'no accession number or day given', 400
 
     w = luigi.worker.Worker(no_install_shutdown_handler=True)
-    task = DailyUpConvertedMerged({'acc': accession_number})
+    if accession_number:
+        print('acc')
+        task = DailyUpConvertedMerged({'acc': accession_number})
+    else:
+        print('day')
+        task = DailyUpConvertedMerged({'day': day})
     w.add(task)
     w.run()
     headers = {'content-type': "application/json"}

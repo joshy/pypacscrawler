@@ -25,11 +25,12 @@ def convert_pacs_file(json_in):
                 p_dict["id"] = entry["PatientID"] + '-' + entry["AccessionNumber"]
             if "InstitutionName" in entry:
                 p_dict["InstitutionName"] = entry["InstitutionName"]
-            if ("PatientBirthDate" in entry and "SeriesDate" in entry):
-                p_dict["PatientBirthDate"] = entry["PatientBirthDate"]
-                p_dict["SeriesDate"] = entry["SeriesDate"]
-                today = datetime.strptime(entry["SeriesDate"], "%Y%m%d")
-                birthdate = datetime.strptime(entry["PatientBirthDate"], "%Y%m%d")
+            if ("PatientBirthDate" in entry and "SeriesDate" in entry and entry["PatientBirthDate"] is not None):
+                patient_birthdate = entry["PatientBirthDate"]
+                p_dict["PatientBirthDate"] = patient_birthdate
+                today = datetime.strptime(entry["StudyDate"], "%Y%m%d")
+                print(entry["AccessionNumber"])
+                birthdate = datetime.strptime(patient_birthdate, "%Y%m%d")
                 p_dict["PatientAge"] = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
             if "PatientName" in entry:
                 p_dict["PatientName"] = entry["PatientName"]
@@ -64,6 +65,7 @@ def add_child(parent, entry):
     child_dict['Category'] = 'child'
     child_dict["Modality"] = entry["Modality"]
     child_dict["SeriesInstanceUID"] = entry["SeriesInstanceUID"]
+    child_dict["id"] = entry["SeriesInstanceUID"]
     child_dict["SeriesTime"] = entry["SeriesTime"]
     if "BodyPartExamined" in entry:
         child_dict["BodyPartExamined"] = entry["BodyPartExamined"]
@@ -83,10 +85,11 @@ def merge_pacs_ris(pacs):
     for entry in pacs:
         dic = {}
         dic = entry
-        aNum = str(entry['AccessionNumber'])
-        url = get_report_show_url(config) + aNum + '&output=text'
-        response = requests.get(url)
-        data = response.text
-        dic['RisReport'] = data
-        my_dict.append(dic)
+        if "AccessionNumber" in entry:
+            aNum = str(entry['AccessionNumber'])
+            url = get_report_show_url(config) + aNum + '&output=text'
+            response = requests.get(url)
+            data = response.text
+            dic['RisReport'] = data
+            my_dict.append(dic)
     return my_dict

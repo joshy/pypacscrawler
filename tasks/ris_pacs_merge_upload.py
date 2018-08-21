@@ -1,16 +1,17 @@
 """ This file contains the tasks to downlad the json files from
     the ris as well as the routines to upload these files to solr
 """
-
+import json
 import logging
 import os
-import json
+
 import requests
+
 import luigi
 from pypacscrawler.config import get_solr_upload_url
 from pypacscrawler.convert import convert_pacs_file, merge_pacs_ris
-from tasks.day import DayTask
 from tasks.accession import AccessionTask
+from tasks.day import DayTask
 from tasks.util import dict_to_str, load_config
 
 
@@ -18,24 +19,24 @@ class ConvertPacsFile(luigi.Task):
     query = luigi.DictParameter()
 
     def requires(self):
-        if 'day' in self.query:
-            return DayTask(self.query['day'])
-        elif 'acc' in self.query:
-            return AccessionTask(self.query['acc'])
+        if "day" in self.query:
+            return DayTask(self.query["day"])
+        elif "acc" in self.query:
+            return AccessionTask(self.query["acc"])
 
     def run(self):
-        with self.input().open('r') as daily:
+        with self.input().open("r") as daily:
             data = daily.read()
             json_in = json.loads(data)
 
         json_out = convert_pacs_file(json_in)
 
-        with self.output().open('w') as my_dict:
+        with self.output().open("w") as my_dict:
             json.dump(json_out, my_dict, indent=4)
 
     def output(self):
         name = dict_to_str(self.query)
-        return luigi.LocalTarget('data/%s_pacs_converted.json' % name)
+        return luigi.LocalTarget("data/%s_pacs_converted.json" % name)
 
 
 class MergePacsRis(luigi.Task):
@@ -45,18 +46,18 @@ class MergePacsRis(luigi.Task):
         return ConvertPacsFile(self.query)
 
     def run(self):
-        with self.input().open('r') as daily:
+        with self.input().open("r") as daily:
             data = daily.read()
             pacs_in = json.loads(data)
 
         merged_out = merge_pacs_ris(pacs_in)
 
-        with self.output().open('w') as my_dict:
+        with self.output().open("w") as my_dict:
             json.dump(merged_out, my_dict, indent=4)
 
     def output(self):
         name = dict_to_str(self.query)
-        return luigi.LocalTarget('data/%s_ris_pacs_merged.json' % name)
+        return luigi.LocalTarget("data/%s_ris_pacs_merged.json" % name)
 
 
 class DailyUpConvertedMerged(luigi.Task):
@@ -68,24 +69,25 @@ class DailyUpConvertedMerged(luigi.Task):
     def run(self):
         config = load_config()
         upload_url = get_solr_upload_url(config)
-        logging.debug('Uploading to url %s', upload_url)
-        with self.input().open('rb') as in_file:
-            file = {'file': (in_file.name, in_file, 'application/json')}
+        logging.debug("Uploading to url %s", upload_url)
+        with self.input().open("r") as in_file:
+            file = {"file": (in_file.name, in_file, "application/json")}
             update_response = requests.post(
-                url=upload_url, files=file, params={'commit': 'true'})
-
+                url=upload_url, files=file, params={"commit": "true"}
+            )
         if not update_response.ok:
+            print(update_response)
             update_response.raise_for_status()
         else:
-            with self.output().open('w') as my_file:
-                my_file.write('Upload successful')
+            with self.output().open("w") as my_file:
+                my_file.write("Upload successful")
 
     def output(self):
         name = dict_to_str(self.query)
-        return luigi.LocalTarget('data/%s_solr_uploaded.txt' % name)
+        return luigi.LocalTarget("data/%s_solr_uploaded.txt" % name)
 
 
 # example usage:
 # PYTHONPATH='.' luigi --module tasks.ris_pacs_merge_upload DailyUpConvertedMerged --local-scheduler --day yyyy-mm-dd
-if __name__ == '__main__':
+if __name__ == "__main__":
     luigi.run()
