@@ -32,16 +32,16 @@
       <table class="pa2 f6 w-50 mw8 fl" cellspacing="0">
         <thead>
           <tr>
-            <th class="normal bb tl pa1 bg-white">Modality</th>
             <th class="normal bb tr pa1 bg-white">Series Nr.</th>
+            <th class="normal bb tl pa1 bg-white">Modality</th>
             <th class="normal bb tl pa1 bg-white">Series Description</th>
           </tr>
         </thead>
         <tbody class="lh-copy">
           {% for i in result._childDocuments_ %}
           <tr>
-            <td class="pa1">{{ i['Modality'] }}</td>
             <td class="pa1 tr">{{ i['SeriesNumber'] }}</td>
+            <td class="pa1">{{ i['Modality'] }}</td>
             <td class="pa1">{{ i['SeriesDescription'] }}</td>
           </tr>
           {% endfor %}

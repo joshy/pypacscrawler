@@ -1,13 +1,12 @@
 """ This file contains the locic associated with the tasks
     in the file 'ris_pacs_merge_upload.py'
 """
-
 from datetime import date, datetime
 
 import requests
 
 from pypacscrawler.config import get_report_show_url
-from tasks.util import dict_to_str, load_config
+from tasks.util import load_config
 
 
 def convert_pacs_file(json_in):
@@ -44,6 +43,11 @@ def convert_pacs_file(json_in):
                 p_dict["StudyDescription"] = entry["StudyDescription"]
             if entry["StudyID"]:
                 p_dict["StudyID"] = entry["StudyID"]
+            if "StationName" in entry:
+                p_dict["StationName"] = entry["StationName"]
+            # discussed with T.Weikert, can be on study level
+            if "ProtocolName" in entry:
+                p_dict["ProtocolName"] = entry["ProtocolName"]
             p_dict['_childDocuments_'] = []
             p_dict = add_child(p_dict, entry)
             acc_dict[entry['AccessionNumber']] = p_dict
@@ -67,6 +71,7 @@ def add_child(parent, entry):
         child_dict["SeriesDescription"] = entry["SeriesDescription"]
     if "SeriesNumber" in entry:
         child_dict["SeriesNumber"] = entry["SeriesNumber"]
+
     parent['_childDocuments_'].append(child_dict)
     return parent
 
