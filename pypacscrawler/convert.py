@@ -29,7 +29,6 @@ def convert_pacs_file(json_in):
                 patient_birthdate = entry["PatientBirthDate"]
                 p_dict["PatientBirthDate"] = patient_birthdate
                 today = datetime.strptime(entry["StudyDate"], "%Y%m%d")
-                print(entry["AccessionNumber"])
                 birthdate = datetime.strptime(patient_birthdate, "%Y%m%d")
                 p_dict["PatientAge"] = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
             if "PatientName" in entry:
