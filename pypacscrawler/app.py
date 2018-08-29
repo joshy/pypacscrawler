@@ -58,7 +58,7 @@ def search():
             for result in results:
                 result['_childDocuments_'] = sorted(
                     result['_childDocuments_'],
-                    key=lambda k: int(k['SeriesNumber']))
+                    key=lambda k: int(k['SeriesNumber'] or '0'))
 
         return render_template(
             'result.html',
@@ -86,7 +86,6 @@ def upload():
 
     w = luigi.worker.Worker(no_install_shutdown_handler=True)
     if accession_number:
-        print('acc')
         task = DailyUpConvertedMerged({'acc': accession_number})
     else:
         print('day')
