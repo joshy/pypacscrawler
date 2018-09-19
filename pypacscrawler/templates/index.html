@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="w-100 h-100">
+
 <head>
   <title>PyPacsCrawler</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,13 +9,21 @@
   <link rel="stylesheet" href="{{url_for('static', filename='css/all.css') }}">
 </head>
 
-<body class="w-100 sans-serif">
-    {% include 'partials/header.html' %}
-    {% include 'partials/search.html' %}
-    {% block content %}
-    {% endblock content %}
-    {% assets "js_all" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
+<body class="w-100 h-100 sans-serif">
+  {% include 'partials/header.html' %}
+  {% include 'partials/search.html' %}
+  {% block content %}
+  {% endblock content %}
+  <div class="w-100 h-100 center mw8 pt3 pb3">
+    <div class="f4 lh-title normal">
+      <span>Task status </span>
+      <a class="navy pl-5" target="_blank" href="{{luigi_scheduler}}"><i class="fas fa-external-link-square-alt"></i></a>
+      <a id="reload-button" class="f6 link dim ba ph3 pv2 mb2 dib white bg-navy fr" href="">Reload <i class="fas fa-sync-alt"></i></a>
+    </div>
+    <iframe id="luigi" class="w-100 mw8 center h-100" src="{{luigi_scheduler}}"></iframe>
+  </div>
+  {% assets "js_all" %}
+  <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
 </body>
 </html>
