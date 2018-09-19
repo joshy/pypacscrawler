@@ -21,6 +21,7 @@ app.config.from_object("pypacscrawler.default_config")
 app.config.from_pyfile("config.cfg")
 version = app.config["VERSION"] = "1.0.0"
 
+luigi_scheduler = app.config["LUIGI_SCHEDULER"]
 
 assets = Environment(app)
 js = Bundle(
@@ -43,7 +44,9 @@ def to_date(date_as_int):
 
 @app.route("/")
 def main():
-    return render_template("index.html", version=app.config["VERSION"])
+    return render_template(
+        "index.html", luigi_scheduler=luigi_scheduler, version=app.config["VERSION"]
+    )
 
 
 @app.route("/search")
@@ -72,6 +75,7 @@ def search():
             "result.html",
             accession_number=accession_number,
             day=day,
+            luigi_scheduler=luigi_scheduler,
             version=app.config["VERSION"],
             results=results,
         )
@@ -80,6 +84,7 @@ def search():
             "error.html",
             accession_number=accession_number,
             day=day,
+            luigi_scheduler=luigi_scheduler,
             version=app.config["VERSION"],
             results={},
         )
