@@ -1,8 +1,8 @@
 # Changelog
 
 
-## v0.0.7 - 08.08.2018
- * Flasiky PyPacsCrawler
+## v1.0.0 - 19.09.2018
+ * Flaskify PyPacsCrawler
 
 ## v0.0.6 - 29.06.2017
  * StationName and ProtocolName added to the query
