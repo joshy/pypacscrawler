@@ -10,6 +10,8 @@ class DayTask(luigi.Task):
     # day format is yyyy-mm-dd
     day = luigi.Parameter()
 
+    resources = {"pacs_connection": 1}
+
     def run(self):
         config = load_config()
         results = query_day(config, self.day)

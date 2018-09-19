@@ -3,8 +3,9 @@
 
 
 ## Setup
-Make sure there is a config.ini file in the main directory. Copy the existing
-config.init.template to config.ini and change values accordingly.
+Make sure there is a config.cfg in the instance folder (like the other projects).
+Tasks are run by [luigi](https://github.com/spotify/luigi),
+so make sure there is a central luidi scheduler running.
 
 ## Run
 Run the help command for all options
