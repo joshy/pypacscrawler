@@ -3,6 +3,7 @@ import logging
 import os
 import shlex
 import subprocess
+import sys
 from datetime import datetime
 
 import pandas as pd
@@ -15,6 +16,12 @@ import luigi
 from pypacscrawler.config import get_report_show_url
 from pypacscrawler.query import query_accession_number
 from tasks.ris_pacs_merge_upload import DailyUpConvertedMerged, MergePacsRis
+
+try:
+    import uwsgi
+    ex = os.path.join(uwsgi.opt["venv"].decode("latin1"), "bin/python")
+except (ImportError, KeyError):
+    ex = sys.executable
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object("pypacscrawler.default_config")
@@ -125,9 +132,13 @@ def batch():
     range = pd.date_range(from_date_as_date, to_date_as_date)
     for day in range:
         cur_day = day.strftime("%Y-%m-%d")
-        cmd = 'python -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{{"day": "{}"}}\''.format(
-            cur_day
+        cmd = (
+            ex
+            + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"day": "%s"}\''
+            % cur_day
         )
-        logging.debug("Running command:", cmd)
-        subprocess.run(shlex.split(cmd), shell=False, check=False)
+
+        logging.debug("Running command :", cmd)
+        cmds = shlex.split(cmd)
+        subprocess.run(cmds, shell=False, check=False)
     return json.dumps({"status": "ok"})
