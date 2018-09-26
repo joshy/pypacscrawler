@@ -1,5 +1,7 @@
 # Changelog
 
+## v1.0.1 - 26.09.2018
+ * StudyInstanceUID was lost
 
 ## v1.0.0 - 19.09.2018
  * Flaskify PyPacsCrawler
