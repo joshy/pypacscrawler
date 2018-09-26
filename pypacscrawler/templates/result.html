@@ -4,57 +4,67 @@
     <a id="upload-button" class="f6 link dim ph3 pv2 mb2 dib white bg-navy fr" href="#0">Upload to Ris/PacsCrawler</a>
   </div>
   {% for result in results %}
-  <div>
-    <div class="overflow-auto">
-        <article class="pa2">
-            <dl class="dib mr3">
-              <dd class="f6 f6-ns ml0">Patiend ID</dd>
-              <dd class="f5 f5-ns b ml0">{{ result['PatientID'] }}</dd>
-            </dl>
-            <dl class="dib mr3">
-              <dd class="f6 f6-ns ml0">Name, Birthdate</dd>
-              <dd class="f5 f5-ns b ml0">{{ result['PatientName'] }}, {{ result['PatientBirthDate'] | to_date }}</dd>
-            </dl>
-            <dl class="dib mr3">
-              <dd class="f6 f6-ns ml0">Study Date</dd>
-              <dd class="f5 f5-ns b ml0">{{ result['StudyDate'] | to_date }}</dd>
-            </dl>
-            <dl class="dib mr3">
-              <dd class="f6 f6-ns ml0">Institution</dd>
-              <dd class="f5 f5-ns b ml0">{{ result['InstitutionName'] }}</dd>
-            </dl>
-            <dl class="dib mr3">
-              <dd class="f6 f6-ns ml0">Referring Physician</dd>
-              <dd class="f5 f5-ns b ml0">{{ result['ReferringPhysicianName'] }}</dd>
-            </dl>
-          </article>
-        <div class="pa2 f6 w-100 mw8 fl">
-      <table class="pa2 f6 w-50 mw8 fl" cellspacing="0">
-        <thead>
-          <tr>
-            <th class="normal bb tr pa1 bg-white">Series Nr.</th>
-            <th class="normal bb tl pa1 bg-white">Modality</th>
-            <th class="normal bb tl pa1 bg-white">Series Description</th>
-          </tr>
-        </thead>
-        <tbody class="lh-copy">
-          {% for i in result._childDocuments_ %}
-          <tr>
-            <td class="pa1 tr">{{ i['SeriesNumber'] }}</td>
-            <td class="pa1">{{ i['Modality'] }}</td>
-            <td class="pa1">{{ i['SeriesDescription'] }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  <div class="pt5">
+    <div class="overflow-auto bt">
+      <article>
+        <dl class="dib mr3">
+          <dd class="f6 f6-ns ml0">Patiend ID</dd>
+          <dd class="f5 f5-ns b ml0">{{ result['PatientID'] }}</dd>
+        </dl>
+        <dl class="dib mr3">
+          <dd class="f6 f6-ns ml0">Name, Birthdate</dd>
+          <dd class="f5 f5-ns b ml0">{{ result['PatientName'] }}, {{ result['PatientBirthDate'] | to_date }}</dd>
+        </dl>
+        <dl class="dib mr3">
+          <dd class="f6 f6-ns ml0">Study Description</dd>
+          <dd class="f5 f5-ns b ml0">{{ result['StudyDescription'] }}</dd>
+        </dl>
+        <dl class="dib mr3">
+          <dd class="f6 f6-ns ml0">Study Date</dd>
+          <dd class="f5 f5-ns b ml0">{{ result['StudyDate'] | to_date }}</dd>
+        </dl>
+      </article>
+      <article>
+        <dl class="dib mr3">
+          <dd class="f6 f6-ns ml0">Accession Number</dd>
+          <dd class="f5 f5-ns b ml0">{{ result['AccessionNumber'] }}</dd>
+        </dl>
+        <dl class="dib mr3">
+          <dd class="f6 f6-ns ml0">Institution</dd>
+          <dd class="f5 f5-ns b ml0">{{ result['InstitutionName'] }}</dd>
+        </dl>
+        <dl class="dib mr3">
+          <dd class="f6 f6-ns ml0">Referring Physician</dd>
+          <dd class="f5 f5-ns b ml0">{{ result['ReferringPhysicianName'] }}</dd>
+        </dl>
+      </article>
+      <div class="pa2 f6 w-100 mw8 fl bb bw2">
+        <table class="pa2 f6 w-50 mw8 fl" cellspacing="0">
+          <thead>
+            <tr>
+              <th class="normal bb tr pa1 bg-white">Series Nr.</th>
+              <th class="normal bb tl pa1 bg-white">Modality</th>
+              <th class="normal bb tl pa1 bg-white">Series Description</th>
+            </tr>
+          </thead>
+          <tbody class="lh-copy">
+            {% for i in result._childDocuments_ %}
+            <tr>
+              <td class="pa1 tr">{{ i['SeriesNumber'] }}</td>
+              <td class="pa1">{{ i['Modality'] }}</td>
+              <td class="pa1">{{ i['SeriesDescription'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
 
-      <div class="pa2 f6 w-50 mw8 fr" cellspacing="0">
-        <div class="pa1 bb">RisReport</div>
-        <div class="cf" style="white-space: pre-line">
-          {{ result['RisReport']}}
+        <div class="pa2 f6 w-50 mw8 fr" cellspacing="0">
+          <div class="pa1 bb">RisReport</div>
+          <div class="cf" style="white-space: pre-line">
+            {{ result['RisReport']}}
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </div>
   {% endfor %}
