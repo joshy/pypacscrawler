@@ -10,6 +10,10 @@ class DayTask(luigi.Task):
     # day format is yyyy-mm-dd
     day = luigi.Parameter()
 
+    # timeout in seconds, 1800 == 30 min
+    # if is not finished by then, do a timeout
+    worker_timeout = 1800
+
     resources = {"pacs_connection": 1}
 
     def run(self):
