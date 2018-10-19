@@ -26,7 +26,7 @@ except (ImportError, KeyError):
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object("pypacscrawler.default_config")
 app.config.from_pyfile("config.cfg")
-version = app.config["VERSION"] = "1.0.1"
+version = app.config["VERSION"] = "1.0.2"
 
 luigi_scheduler = app.config["LUIGI_SCHEDULER"]
 
@@ -125,6 +125,21 @@ def upload():
 def batch():
     from_date = request.args.get("from-date", "")
     to_date = request.args.get("to-date", "")
+    accession_numbers = request.args.get("accession_numbers").split(" ")
+
+    if accession_numbers:
+        for accession_number in accession_numbers:
+            cmd = (
+            ex
+            + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"acc": "%s"}\''
+            % accession_number
+            )
+
+            logging.debug("Running command :", cmd)
+            cmds = shlex.split(cmd)
+            subprocess.run(cmds, shell=False, check=False)
+        return json.dumps({"status": "ok"})
+
     if not (any([from_date, to_date])):
         return "From date or to date is missing", 400
     from_date_as_date = datetime.strptime(from_date, "%Y-%m-%d")
