@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.0.2 - 19.10.2018
+## v1.1.0 - 19.10.2018
  * Upload easily multiple accession numbers
 
 ## v1.0.1 - 26.09.2018
