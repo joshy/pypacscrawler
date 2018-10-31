@@ -33,7 +33,7 @@ luigi_scheduler = app.config["LUIGI_SCHEDULER"]
 assets = Environment(app)
 js = Bundle(
     "js/jquery-3.3.1.min.js",
-    "js/noty.min.js",
+    "js/jquery.noty.packaged.min.js",
     "js/script.js",
     filters="jsmin",
     output="gen/packed.js",
@@ -127,7 +127,7 @@ def batch():
     to_date = request.args.get("to-date", "")
     accession_numbers = request.args.get("accession_numbers").split(" ")
 
-    if accession_numbers:
+    if not(all("" == s or s.isspace() for s in accession_numbers)):
         for accession_number in accession_numbers:
             cmd = (
             ex

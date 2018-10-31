@@ -5,8 +5,8 @@
   <title>PyPacsCrawler</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{{url_for('static', filename='css/tachyons.min.css') }}">
-  <link rel="stylesheet" href="{{url_for('static', filename='css/noty.css') }}">
   <link rel="stylesheet" href="{{url_for('static', filename='css/all.css') }}">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/custom.css') }}">
 </head>
 
 <body class="w-100 h-100 sans-serif">
@@ -14,8 +14,8 @@
   {% include 'partials/search.html' %}
   {% block content %}
   {% endblock content %}
-  <div class="w-100 h-100 center mw8 pt3 pb3">
-    <div class="f4 lh-title normal">
+  <div class="w-100 h-100 center mw8 pt3 pb3 bg_gray">
+    <div class="f4 lh-title normal ph2">
       <span>Task status </span>
       <a class="navy pl-5" target="_blank" href="{{luigi_scheduler}}"><i class="fas fa-external-link-square-alt"></i></a>
       <a id="reload-button" class="f6 link dim ba ph3 pv2 mb2 dib white bg-navy fr" href="">Reload <i class="fas fa-sync-alt"></i></a>
@@ -26,4 +26,5 @@
   <script type="text/javascript" src="{{ ASSET_URL }}"></script>
   {% endassets %}
 </body>
+
 </html>

@@ -16,10 +16,13 @@ $(function () {
       data: form.serialize(),
       success: function (data) {
         console.log(data);
-        new Noty({
-          theme: 'sunset',
+        noty({
           type: 'info',
-          text: 'Jobs submitted'
+          text: 'Jobs submitted',
+          layout: 'centerRight',
+          timeout: '3000',
+          closeWith: ['click', 'hover'],
+          theme: 'metroui'
         }).show();
       }
     })

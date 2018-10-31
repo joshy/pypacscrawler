@@ -1,20 +1,20 @@
-<div class="w-100 b--black-10 mw8 center pt3 pb3 bb b--light-gray">
+<div class="mw8 b--black-10 center pt3 pb3 bt bb b--light-gray bg_gray ph2">
     <form action="/search">
         <label for="search-input" class="pr2">Accession Number</label>
         <input class="f6 pa2 input-reset ba bg-transparent hover-bg-grey hover-black b--black" value="{{accession_number}}"
             type="text" name="accession_number" id="search-input" placeholder="accession number">
-        <label for="day-input" class="pl5 pr2">Day</label>
+        <label for="day-input" class="pl3 pr2">Day</label>
         <input class="f6 pa2 input-reset ba bg-transparent hover-bg-grey hover-black b--black" value="{{day}}" type="date"
             name="day" id="day-input" placeholder="Day in format dd.mm.yyyy">
         <input class="f6 input-reset pa2 ba white bg-navy pointer b--navy fr" type="submit" value="Search PACS">
     </form>
 </div>
-<div class="w-100 b--black-10 mw8 center pt3 pb3 bb b--light-gray">
+<div class="w-100 b--black-10 mw8 center pt3 pb3 bb b--light-gray bg_gray  ph2">
     <form id="batch-upload" action="/batch-upload">
         <label for="from-input" class="pr2">From Date</label>
         <input class="f6 pa2 input-reset ba bg-transparent hover-bg-grey hover-black b--black" value="{{day}}" type="date"
             name="from-date" id="from-date" placeholder="Day in format dd.mm.yyyy">
-        <label for="day-input" class="pl5 pr2">To Date</label>
+        <label for="day-input" class="pl3 pr2">To Date</label>
         <input class="f6 pa2 input-reset ba bg-transparent hover-bg-grey hover-black b--black" value="{{day}}" type="date"
             name="to-date" id="to-date" placeholder="Day in format dd.mm.yyyy">
         <label for="day-input" class="pl5 pr2">Accession Numbers</label>
