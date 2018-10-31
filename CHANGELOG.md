@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.1.1 - 31.10.2018
+ * Fixed batch upload of days
+
 ## v1.1.0 - 19.10.2018
  * Upload easily multiple accession numbers
 

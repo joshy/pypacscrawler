@@ -19,6 +19,7 @@ from tasks.ris_pacs_merge_upload import DailyUpConvertedMerged, MergePacsRis
 
 try:
     import uwsgi
+
     ex = os.path.join(uwsgi.opt["venv"].decode("latin1"), "bin/python")
 except (ImportError, KeyError):
     ex = sys.executable
@@ -26,7 +27,7 @@ except (ImportError, KeyError):
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object("pypacscrawler.default_config")
 app.config.from_pyfile("config.cfg")
-version = app.config["VERSION"] = "1.1.0"
+version = app.config["VERSION"] = "1.1.1"
 
 luigi_scheduler = app.config["LUIGI_SCHEDULER"]
 
@@ -127,12 +128,12 @@ def batch():
     to_date = request.args.get("to-date", "")
     accession_numbers = request.args.get("accession_numbers").split(" ")
 
-    if not(all("" == s or s.isspace() for s in accession_numbers)):
+    if not (all("" == s or s.isspace() for s in accession_numbers)):
         for accession_number in accession_numbers:
             cmd = (
-            ex
-            + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"acc": "%s"}\''
-            % accession_number
+                ex
+                + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"acc": "%s"}\''
+                % accession_number
             )
 
             logging.debug("Running command :", cmd)
