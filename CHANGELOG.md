@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.1.2 - 12.11.2018
+ * StudyID not always filled in
+
 ## v1.1.1 - 31.10.2018
  * Fixed batch upload of days
 

@@ -42,7 +42,7 @@ def convert_pacs_file(json_in):
             p_dict["StudyInstanceUID"] = entry["StudyInstanceUID"]
             if entry["StudyDescription"]:
                 p_dict["StudyDescription"] = entry["StudyDescription"]
-            if entry["StudyID"]:
+            if "StudyID" in entry:
                 p_dict["StudyID"] = entry["StudyID"]
             if "StationName" in entry:
                 p_dict["StationName"] = entry["StationName"]
@@ -73,7 +73,6 @@ def add_child(parent, entry):
         child_dict["SeriesDescription"] = entry["SeriesDescription"]
     if "SeriesNumber" in entry:
         child_dict["SeriesNumber"] = entry["SeriesNumber"]
-
     parent['_childDocuments_'].append(child_dict)
     return parent
 
