@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.1.3 - 08.02.2019
+ * StudyInstanceUID is now on the child level (GRASP)
+
 ## v1.1.2 - 12.11.2018
  * StudyID not always filled in
 

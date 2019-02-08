@@ -27,7 +27,7 @@ except (ImportError, KeyError):
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object("pypacscrawler.default_config")
 app.config.from_pyfile("config.cfg")
-version = app.config["VERSION"] = "1.1.2"
+version = app.config["VERSION"] = "1.1.3"
 
 luigi_scheduler = app.config["LUIGI_SCHEDULER"]
 
