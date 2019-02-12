@@ -16,9 +16,10 @@ class StudyUIDTask(luigi.Task):
         filename = "./instance/config.cfg"
         with open(filename) as fp:
             config.read_file(chain(["[PACS]"], fp), source=filename)
-        study_uid = query_for_study_uid(config, self.accession_number)
+        study_uids = query_for_study_uid(config, self.accession_number)
         with self.output().open("w") as outfile:
-            outfile.write(study_uid)
+            for i in study_uids:
+                outfile.write(i + "\n")
 
     def output(self):
         return luigi.LocalTarget("data/%s_accession.txt" % self.accession_number)

@@ -15,16 +15,21 @@ class AccessionTask(luigi.Task):
 
     def run(self):
         config = load_config()
-        with self.input().open('r') as f:
-            study_uid = f.read()
+        study_uids = []
+        with self.input().open("r") as f:
+            for line in f:
+                study_uids.append(line.strip())
 
-        results = query_accession_number(config, study_uid)
-        with self.output().open('w') as outfile:
-            w.write_file(results, outfile)
+        results = []
+        for study_uid in study_uids:
+            results.append(query_accession_number(config, study_uid))
+        flat = [item for sublist in results for item in sublist]
+        with self.output().open("w") as outfile:
+            w.write_file(flat, outfile)
 
     def output(self):
-        return luigi.LocalTarget('data/%s_accession.json' % self.accession_number)
+        return luigi.LocalTarget("data/%s_accession.json" % self.accession_number)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     luigi.run()
