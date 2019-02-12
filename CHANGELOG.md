@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.4 - 12.02.2019
+ * Query by accession number now can handle that multiple study uids can
+   be returned
+
 ## v1.1.3 - 08.02.2019
  * StudyInstanceUID is now on the child level (GRASP)
 
