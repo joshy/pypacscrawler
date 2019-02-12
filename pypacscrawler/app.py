@@ -129,7 +129,6 @@ def batch():
     accession_number = request.args.get("accession_number")
 
     if accession_number:
-        return json.dumps({"status": "ok"})
         cmd = (
             ex
             + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"acc": "%s"}\''
