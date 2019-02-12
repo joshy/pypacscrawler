@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.1.4 - 12.02.2019
+## v1.2.0 - 12.02.2019
  * Query by accession number now can handle that multiple study uids can
    be returned
 
