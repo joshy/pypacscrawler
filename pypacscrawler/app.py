@@ -126,20 +126,19 @@ def upload():
 def batch():
     from_date = request.args.get("from-date", "")
     to_date = request.args.get("to-date", "")
-    accession_numbers = request.args.get("accession_numbers").split(" ")
+    accession_number = request.args.get("accession_number")
 
-    if not (all("" == s or s.isspace() for s in accession_numbers)):
-        for accession_number in accession_numbers:
-            cmd = (
-                ex
-                + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"acc": "%s"}\''
-                % accession_number
-            )
-
-            logging.debug("Running command :", cmd)
-            cmds = shlex.split(cmd)
-            subprocess.run(cmds, shell=False, check=False)
+    if accession_number:
         return json.dumps({"status": "ok"})
+        cmd = (
+            ex
+            + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"acc": "%s"}\''
+            % accession_number
+        )
+        logging.debug("Running command :", cmd)
+        cmds = shlex.split(cmd)
+        subprocess.run(cmds, shell=False, check=False)
+    return json.dumps({"status": "ok"})
 
     if not (any([from_date, to_date])):
         return "From date or to date is missing", 400
