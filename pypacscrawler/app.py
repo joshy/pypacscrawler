@@ -137,22 +137,23 @@ def batch():
         logging.debug("Running command :", cmd)
         cmds = shlex.split(cmd)
         subprocess.run(cmds, shell=False, check=False)
-    return json.dumps({"status": "ok"})
+        return json.dumps({"status": "ok"})
+    else:
+        if not (any([from_date, to_date])):
+            return "From date or to date is missing", 400
 
-    if not (any([from_date, to_date])):
-        return "From date or to date is missing", 400
-    from_date_as_date = datetime.strptime(from_date, "%Y-%m-%d")
-    to_date_as_date = datetime.strptime(to_date, "%Y-%m-%d")
-    range = pd.date_range(from_date_as_date, to_date_as_date)
-    for day in range:
-        cur_day = day.strftime("%Y-%m-%d")
-        cmd = (
-            ex
-            + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"day": "%s"}\''
-            % cur_day
-        )
+        from_date_as_date = datetime.strptime(from_date, "%Y-%m-%d")
+        to_date_as_date = datetime.strptime(to_date, "%Y-%m-%d")
+        range = pd.date_range(from_date_as_date, to_date_as_date)
+        for day in range:
+            cur_day = day.strftime("%Y-%m-%d")
+            cmd = (
+                ex
+                + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"day": "%s"}\''
+                % cur_day
+            )
 
-        logging.debug("Running command :", cmd)
-        cmds = shlex.split(cmd)
-        subprocess.run(cmds, shell=False, check=False)
-    return json.dumps({"status": "ok"})
+            logging.debug("Running command :", cmd)
+            cmds = shlex.split(cmd)
+            subprocess.run(cmds, shell=False, check=False)
+        return json.dumps({"status": "ok"})
