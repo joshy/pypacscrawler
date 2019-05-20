@@ -37,7 +37,8 @@ def convert_pacs_file(json_in):
                 p_dict["PatientSex"] = entry["PatientSex"]
             if "ReferringPhysicianName" in entry:
                 p_dict["ReferringPhysicianName"] = entry["ReferringPhysicianName"]
-            p_dict["SeriesDate"] = entry["SeriesDate"]
+            if "SeriesDate" in entry:
+                p_dict["SeriesDate"] = entry["SeriesDate"]
             p_dict["StudyDate"] = entry["StudyDate"]
             if entry["StudyDescription"]:
                 p_dict["StudyDescription"] = entry["StudyDescription"]
@@ -45,9 +46,6 @@ def convert_pacs_file(json_in):
                 p_dict["StudyID"] = entry["StudyID"]
             if "StationName" in entry:
                 p_dict["StationName"] = entry["StationName"]
-            # discussed with T.Weikert, can be on study level
-            if "ProtocolName" in entry:
-                p_dict["ProtocolName"] = entry["ProtocolName"]
             p_dict['_childDocuments_'] = []
             p_dict = add_child(p_dict, entry)
             acc_dict[entry['AccessionNumber']] = p_dict
@@ -66,13 +64,16 @@ def add_child(parent, entry):
     child_dict["StudyInstanceUID"] = entry["StudyInstanceUID"]
     child_dict["SeriesInstanceUID"] = entry["SeriesInstanceUID"]
     child_dict["id"] = entry["SeriesInstanceUID"]
-    child_dict["SeriesTime"] = entry["SeriesTime"]
+    if "SeriesTime" in entry:
+        child_dict["SeriesTime"] = entry["SeriesTime"]
     if "BodyPartExamined" in entry:
         child_dict["BodyPartExamined"] = entry["BodyPartExamined"]
     if "SeriesDescription" in entry:
         child_dict["SeriesDescription"] = entry["SeriesDescription"]
     if "SeriesNumber" in entry:
         child_dict["SeriesNumber"] = entry["SeriesNumber"]
+    if "ProtocolName" in entry:
+        child_dict["ProtocolName"] = entry["ProtocolName"]
     parent['_childDocuments_'].append(child_dict)
     return parent
 
