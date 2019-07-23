@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.3.0 - 23.07.2019
+ * Upload based on study description is possible
+
 ## v1.2.0 - 12.02.2019
  * Query by accession number now can handle that multiple study uids can
    be returned
