@@ -127,8 +127,22 @@ def batch():
     from_date = request.args.get("from-date", "")
     to_date = request.args.get("to-date", "")
     accession_number = request.args.get("accession_number")
+    study_description = request.args.get("study_description")
 
-    if accession_number:
+    if study_description:
+        from_date_as_date = datetime.strptime(from_date, "%Y-%m-%d")
+        to_date_as_date = datetime.strptime(to_date, "%Y-%m-%d")
+        cmd = (
+            ex
+            + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"studydescription": "%s", "from_date":"%s", "to_date":"%s"}\''
+            % (study_description, from_date_as_date.strftime("%Y%m%d"), to_date_as_date.strftime("%Y%m%d"))
+        )
+        logging.debug("Running command :", cmd)
+        cmds = shlex.split(cmd)
+        subprocess.run(cmds, shell=False, check=False)
+        return json.dumps({"status": "ok"})
+
+    elif accession_number:
         cmd = (
             ex
             + ' -m tasks.ris_pacs_merge_upload DailyUpConvertedMerged --query \'{"acc": "%s"}\''

@@ -23,3 +23,17 @@
         <input class="f6 input-reset pa2 ba white bg-navy pointer b--navy fr" type="submit" value="Upload">
     </form>
 </div>
+<div class="w-100 b--black-10 mw8 center pt3 pb3 bb b--light-gray bg_gray  ph2">
+    <form id="batch-upload" action="/batch-upload">
+        <label for="from-input" class="pr2">From Date</label>
+        <input class="f6 pa2 input-reset ba bg-transparent hover-bg-grey hover-black b--black" value="{{day}}" type="date"
+            name="from-date" id="from-date" placeholder="Day in format dd.mm.yyyy">
+        <label for="day-input" class="pl3 pr2">To Date</label>
+        <input class="f6 pa2 input-reset ba bg-transparent hover-bg-grey hover-black b--black" value="{{day}}" type="date"
+            name="to-date" id="to-date" placeholder="Day in format dd.mm.yyyy">
+        <label for="day-input" class="pl5 pr2">Study Description</label>
+        <input class="f6 pa2 input-reset ba bg-transparent hover-bg-grey hover-black b--black" value="{{study_description}}"
+            name="study_description" id="study_description" placeholder="Study Description">
+        <input class="f6 input-reset pa2 ba white bg-navy pointer b--navy fr" type="submit" value="Upload">
+    </form>
+</div>

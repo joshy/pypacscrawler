@@ -12,6 +12,7 @@ from pypacscrawler.config import get_solr_upload_url
 from pypacscrawler.convert import convert_pacs_file, merge_pacs_ris
 from tasks.accession import AccessionTask
 from tasks.day import DayTask
+from tasks.study_description import StudyDescription
 from tasks.util import dict_to_str, load_config
 
 
@@ -23,6 +24,12 @@ class ConvertPacsFile(luigi.Task):
             return DayTask(self.query["day"])
         elif "acc" in self.query:
             return AccessionTask(self.query["acc"])
+        elif "studydescription" in self.query:
+            return StudyDescription(
+                self.query["studydescription"],
+                self.query["from_date"],
+                self.query["to_date"],
+            )
 
     def run(self):
         with self.input().open("r") as daily:

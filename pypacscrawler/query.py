@@ -11,7 +11,9 @@ from pypacscrawler.command import (
     add_study_uid,
     add_time,
     add_day,
+    add_day_range,
     add_modality,
+    add_study_description,
     year_start_end,
     MODALITIES,
     INITIAL_TIME_RANGE,
@@ -33,6 +35,14 @@ def query_for_study_uid(config, accession_number):
     raise LookupError(
         "No result found for accession number: {}".format(accession_number)
     )
+
+
+def query_study_description(config, study_description, from_date, to_date):
+    query = basic_query(config)
+    query = add_study_description(query, study_description)
+    query = add_day_range(query, from_date, to_date)
+    result, _ = run(query)
+    return [result]
 
 
 def query_accession_number(config, study_uid):

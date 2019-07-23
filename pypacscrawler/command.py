@@ -66,6 +66,16 @@ def add_study_uid(query, study_uid):
     return query + ' -k StudyInstanceUID=' + study_uid
 
 
+def add_study_description(query, study_description):
+    """ Search only for specific  study descriptions """
+    return query + ' -k StudyDescription=' + study_description
+
+
+def add_day_range(query, from_day, to_day):
+    """ Limit by a day range """
+    return query + ' -k StudyDate=' + from_day + '-' + to_day
+
+
 def year_start_end(year):
     # type: (str) -> Tuple[date, date]
     y = datetime.strptime(year, '%Y')
