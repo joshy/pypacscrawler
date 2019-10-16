@@ -3,7 +3,8 @@
 """
 from datetime import date, datetime
 
-import requests
+from requests import get
+from requests.auth import HTTPBasicAuth
 
 from pypacscrawler.config import get_report_show_url
 from tasks.util import load_config
@@ -81,6 +82,9 @@ def add_child(parent, entry):
 def merge_pacs_ris(pacs):
     """ Insert ris report into converted pacs json file"""
     config = load_config()
+    uses_basis_auth = bool(config["REPORT_USES_BASIC_AUTH"])
+    user = config["REPORT_USER"]
+    pwd = config["REPORT_PWD"]
     my_dict = []
     for entry in pacs:
         dic = {}
@@ -88,7 +92,7 @@ def merge_pacs_ris(pacs):
         if "AccessionNumber" in entry:
             aNum = str(entry['AccessionNumber'])
             url = get_report_show_url(config) + aNum + '&output=text'
-            response = requests.get(url)
+            response = get(url, auth=HTTPBasicAuth(user, pwd))
             data = response.text
             dic['RisReport'] = data
             my_dict.append(dic)
